@@ -3,6 +3,9 @@ set -euo pipefail
 
 KIOSK_USER="${KIOSK_USER:-kiosk}"
 KIOSK_URL="${KIOSK_URL:-https://kousen.cc}"
+KIOSK_DISPLAY_OUTPUT="${KIOSK_DISPLAY_OUTPUT:-}"
+KIOSK_DISPLAY_MODE="${KIOSK_DISPLAY_MODE:-}"
+KIOSK_WINDOW_SIZE="${KIOSK_WINDOW_SIZE:-}"
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 if [[ "${EUID}" -ne 0 ]]; then
@@ -48,6 +51,9 @@ fi
 install -d -m 0755 /etc/kousen-kiosk
 cat > /etc/kousen-kiosk/config.env <<EOF
 KIOSK_URL="${KIOSK_URL}"
+KIOSK_DISPLAY_OUTPUT="${KIOSK_DISPLAY_OUTPUT}"
+KIOSK_DISPLAY_MODE="${KIOSK_DISPLAY_MODE}"
+KIOSK_WINDOW_SIZE="${KIOSK_WINDOW_SIZE}"
 EOF
 touch /etc/kousen-kiosk/enabled
 
@@ -91,4 +97,10 @@ systemctl enable getty@tty1.service
 echo "Kousen Kiosk installed."
 echo "Kiosk user: ${KIOSK_USER}"
 echo "Kiosk URL:  ${KIOSK_URL}"
+if [[ -n "${KIOSK_DISPLAY_OUTPUT}" || -n "${KIOSK_DISPLAY_MODE}" ]]; then
+  echo "Display:    ${KIOSK_DISPLAY_OUTPUT:-auto} ${KIOSK_DISPLAY_MODE:-auto}"
+fi
+if [[ -n "${KIOSK_WINDOW_SIZE}" ]]; then
+  echo "Window:     ${KIOSK_WINDOW_SIZE}"
+fi
 echo "Reboot to enter kiosk mode: sudo reboot"
