@@ -1,0 +1,19 @@
+{
+  "AutofillAddressEnabled": false,
+  "AutofillCreditCardEnabled": false,
+  "BrowserAddPersonEnabled": false,
+  "BrowserGuestModeEnabled": false,
+  "BrowserSignin": 0,
+  "DefaultBrowserSettingEnabled": false,
+  "DeveloperToolsAvailability": 2,
+  "HideWebStoreIcon": true,
+  "HomepageIsNewTabPage": false,
+  "HomepageLocation": "https://kousen.cc",
+  "PasswordManagerEnabled": false,
+  "RestoreOnStartup": 4,
+  "RestoreOnStartupURLs": [
+    "https://kousen.cc"
+  ],
+  "SafeBrowsingProtectionLevel": 1,
+  "TranslateEnabled": false
+}
