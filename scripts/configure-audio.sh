@@ -35,6 +35,10 @@ if [[ "${1:-}" == "set-default" ]]; then
   exit 0
 fi
 
+if [[ "${1:-}" == "auto" ]]; then
+  exec /usr/local/bin/kousen-kiosk-audio
+fi
+
 echo "PipeWire/WirePlumber status:"
 wpctl status
 echo
@@ -45,3 +49,7 @@ echo
 echo "Example:"
 echo
 echo "  sudo kousen-configure-audio set-default 42"
+echo
+echo "To run the automatic kiosk selection now:"
+echo
+echo "  sudo kousen-configure-audio auto"

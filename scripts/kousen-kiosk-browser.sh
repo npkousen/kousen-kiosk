@@ -74,6 +74,10 @@ if command -v pipewire >/dev/null 2>&1; then
   fi
 fi
 
+if command -v kousen-kiosk-audio >/dev/null 2>&1; then
+  kousen-kiosk-audio || true
+fi
+
 if command -v xrandr >/dev/null 2>&1; then
   if [[ -n "$KIOSK_DISPLAY_OUTPUT" && -n "$KIOSK_DISPLAY_MODE" ]]; then
     xrandr --output "$KIOSK_DISPLAY_OUTPUT" --mode "$KIOSK_DISPLAY_MODE" --pos 0x0 --primary || true

@@ -78,6 +78,7 @@ touch /etc/kousen-kiosk/enabled
 
 install -m 0755 "$REPO_DIR/scripts/kousen-kiosk-browser.sh" /usr/local/bin/kousen-kiosk-browser
 install -m 0755 "$REPO_DIR/scripts/kousen-kiosk-home.sh" /usr/local/bin/kousen-kiosk-home
+install -m 0755 "$REPO_DIR/scripts/kousen-kiosk-audio.sh" /usr/local/bin/kousen-kiosk-audio
 install -m 0755 "$REPO_DIR/scripts/configure-wifi.sh" /usr/local/sbin/kousen-configure-wifi
 install -m 0755 "$REPO_DIR/scripts/configure-audio.sh" /usr/local/sbin/kousen-configure-audio
 

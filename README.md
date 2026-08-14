@@ -85,7 +85,13 @@ These work from Plex, KousenTV, or any other current browser page because the sh
 
 ## Audio
 
-The installer adds PipeWire, WirePlumber, and ALSA tools so Chromium can output through HDMI or the analog headphone jack.
+The installer adds PipeWire, WirePlumber, and ALSA tools so Chromium can output through HDMI, analog headphones, or USB audio.
+
+On each kiosk boot, audio is selected automatically:
+
+```text
+HDMI -> built-in analog -> first available sink
+```
 
 To inspect audio outputs:
 
@@ -97,6 +103,12 @@ If HDMI is not selected automatically, use the HDMI sink id shown by `wpctl stat
 
 ```sh
 sudo kousen-configure-audio set-default <sink-id>
+```
+
+To rerun the automatic selector without rebooting:
+
+```sh
+sudo kousen-configure-audio auto
 ```
 
 ## Repo Layout

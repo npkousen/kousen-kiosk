@@ -86,6 +86,12 @@ A future first-boot web WiFi portal can be added later if needed. Keep that port
 
 Chromium audio uses PipeWire/WirePlumber on the kiosk session. The installer also includes ALSA tools for hardware-level inspection.
 
+On each kiosk boot, `kousen-kiosk-audio` selects an output with this priority:
+
+```text
+HDMI -> built-in analog -> first available sink
+```
+
 If HDMI is connected but silent, inspect sinks with:
 
 ```sh
