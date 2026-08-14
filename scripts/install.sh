@@ -44,6 +44,18 @@ apt-get install -y \
 
 systemctl enable NetworkManager
 
+if command -v update-grub >/dev/null 2>&1; then
+  install -d -m 0755 /etc/default/grub.d
+  cat > /etc/default/grub.d/kousen-kiosk.cfg <<'EOF'
+# Keep kiosk boots quiet and skip the interactive GRUB menu.
+GRUB_TIMEOUT_STYLE=hidden
+GRUB_TIMEOUT=0
+GRUB_RECORDFAIL_TIMEOUT=0
+GRUB_CMDLINE_LINUX_DEFAULT="quiet loglevel=3 vt.global_cursor_default=0"
+EOF
+  update-grub
+fi
+
 if ! id "$KIOSK_USER" >/dev/null 2>&1; then
   useradd --create-home --shell /bin/bash "$KIOSK_USER"
 fi

@@ -94,3 +94,22 @@ cat /home/kiosk/.local/share/kousen-kiosk/startx.log
 cat /home/kiosk/.local/share/kousen-kiosk/browser.log
 cat /home/kiosk/.local/share/xorg/Xorg.0.log
 ```
+
+## Show The GRUB Menu Again
+
+The installer hides the GRUB boot menu for a cleaner kiosk startup.
+
+To temporarily reach firmware settings, use the GMKtec boot keys during power-on:
+
+```text
+Esc - BIOS/UEFI setup
+F7  - boot device menu
+```
+
+To permanently show GRUB again:
+
+```sh
+sudo rm -f /etc/default/grub.d/kousen-kiosk.cfg
+sudo update-grub
+sudo reboot
+```

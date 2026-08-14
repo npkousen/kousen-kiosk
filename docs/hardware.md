@@ -19,10 +19,20 @@ The SSD should be compatible on paper because the device storage slot and SSD ar
 Recommended starting settings:
 
 - Power on after AC restore: enabled, if available
+- Full screen logo / boot logo / quiet boot: disable, if available
 - Secure Boot: disabled for first Linux install if it causes boot friction
 - Boot order: internal SSD first after install
 - Fast Boot: disabled during setup, optional after stable
 - Wake on LAN: optional
+
+GMKtec firmware typically uses:
+
+```text
+Esc - BIOS/UEFI setup
+F7  - boot device menu
+```
+
+The GMKtec splash/logo is controlled by firmware. If the BIOS has a setting named `Full Screen Logo`, `Boot Logo`, or `Quiet Boot`, disable it to reduce or remove the splash screen. Do not flash or modify firmware just to remove the logo.
 
 ## Display
 
