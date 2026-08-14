@@ -5,11 +5,23 @@ CONFIG_FILE="/etc/kousen-kiosk/config.env"
 KIOSK_URL="${KIOSK_URL:-https://kousen.cc}"
 LOG_DIR="$HOME/.local/share/kousen-kiosk"
 LOG_FILE="$LOG_DIR/browser.log"
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_DATA_HOME="$HOME/.local/share"
+export CHROME_CRASHPAD_PIPE_NAME=""
 
-mkdir -p "$LOG_DIR"
+mkdir -p \
+  "$LOG_DIR" \
+  "$XDG_CONFIG_HOME/kousen-kiosk/chromium" \
+  "$XDG_CACHE_HOME/kousen-kiosk" \
+  "$XDG_DATA_HOME/applications"
 exec >> "$LOG_FILE" 2>&1
 
 echo "=== $(date -Is) starting kousen kiosk browser ==="
+echo "HOME: $HOME"
+echo "XDG_CONFIG_HOME: $XDG_CONFIG_HOME"
+echo "XDG_CACHE_HOME: $XDG_CACHE_HOME"
+echo "XDG_DATA_HOME: $XDG_DATA_HOME"
 
 if [[ -f "$CONFIG_FILE" ]]; then
   # shellcheck source=/dev/null
@@ -50,6 +62,8 @@ exec dbus-run-session "$CHROMIUM_BIN" \
   --no-default-browser-check \
   --noerrdialogs \
   --disable-infobars \
+  --disable-breakpad \
+  --disable-crash-reporter \
   --disable-session-crashed-bubble \
   --disable-features=Translate,AutofillServerCommunication \
   --overscroll-history-navigation=0 \

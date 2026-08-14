@@ -64,7 +64,10 @@ cat > "/home/${KIOSK_USER}/.bash_profile" <<'EOF'
 if [[ -z "${DISPLAY:-}" ]] && [[ "$(tty)" == "/dev/tty1" ]]; then
   if [[ -f /etc/kousen-kiosk/enabled ]]; then
     mkdir -p "$HOME/.local/share/kousen-kiosk"
-    exec startx /usr/local/bin/kousen-kiosk-browser -- -nolisten tcp >> "$HOME/.local/share/kousen-kiosk/startx.log" 2>&1
+    while [[ -f /etc/kousen-kiosk/enabled ]]; do
+      startx /usr/local/bin/kousen-kiosk-browser -- -nolisten tcp >> "$HOME/.local/share/kousen-kiosk/startx.log" 2>&1
+      sleep 5
+    done
   fi
 fi
 EOF
@@ -73,7 +76,10 @@ chown "$KIOSK_USER:$KIOSK_USER" "/home/${KIOSK_USER}/.bash_profile"
 chmod 0644 "/home/${KIOSK_USER}/.bash_profile"
 
 install -d -m 0700 -o "$KIOSK_USER" -g "$KIOSK_USER" "/home/${KIOSK_USER}/.config/kousen-kiosk"
+install -d -m 0700 -o "$KIOSK_USER" -g "$KIOSK_USER" "/home/${KIOSK_USER}/.cache/kousen-kiosk"
 install -d -m 0700 -o "$KIOSK_USER" -g "$KIOSK_USER" "/home/${KIOSK_USER}/.local/share/kousen-kiosk"
+install -d -m 0700 -o "$KIOSK_USER" -g "$KIOSK_USER" "/home/${KIOSK_USER}/.local/share/applications"
+chown -R "$KIOSK_USER:$KIOSK_USER" "/home/${KIOSK_USER}/.config" "/home/${KIOSK_USER}/.cache" "/home/${KIOSK_USER}/.local"
 
 for tty in 2 3 4 5 6; do
   systemctl unmask "getty@tty${tty}.service" >/dev/null 2>&1 || true
