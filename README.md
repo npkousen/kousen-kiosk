@@ -65,12 +65,32 @@ That command uses NetworkManager to scan for WiFi networks and save the selected
 
 After WiFi is saved, you can unplug Ethernet and reboot. The kiosk waits up to 60 seconds for NetworkManager before opening Chromium, which avoids most first-boot "no internet" pages.
 
+## Universal Home Key
+
+The kiosk includes a system-level home action that returns Chromium to:
+
+```text
+https://kousen.cc
+```
+
+Default keybindings:
+
+- `Home`
+- browser/media `Home` (`XF86HomePage`)
+- `Ctrl+Alt+Home`
+- `Super+Home`
+- `F12`
+
+These work from Plex, KousenTV, or any other current browser page because the shortcut is handled by Openbox outside the web app.
+
 ## Repo Layout
 
 - `scripts/install.sh` - provisions the kiosk on a fresh Linux install
 - `scripts/kousen-kiosk-browser.sh` - Chromium kiosk launcher
 - `scripts/configure-wifi.sh` - WiFi setup helper
+- `scripts/kousen-kiosk-home.sh` - universal return-home action
 - `scripts/disable-kiosk.sh` - removes kiosk auto-login for recovery
+- `openbox/rc.xml` - kiosk keyboard and remote shortcuts
 - `systemd/getty@tty1.override.conf` - auto-login config for the kiosk user
 - `chromium/policies/managed/kousen-kiosk.json` - managed Chromium restrictions
 - `docs/install.md` - full install process

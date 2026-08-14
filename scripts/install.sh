@@ -40,6 +40,7 @@ apt-get install -y \
   openbox \
   unclutter \
   x11-xserver-utils \
+  xdotool \
   xinit \
   xserver-xorg
 
@@ -71,6 +72,7 @@ EOF
 touch /etc/kousen-kiosk/enabled
 
 install -m 0755 "$REPO_DIR/scripts/kousen-kiosk-browser.sh" /usr/local/bin/kousen-kiosk-browser
+install -m 0755 "$REPO_DIR/scripts/kousen-kiosk-home.sh" /usr/local/bin/kousen-kiosk-home
 install -m 0755 "$REPO_DIR/scripts/configure-wifi.sh" /usr/local/sbin/kousen-configure-wifi
 
 install -d -m 0755 /etc/chromium/policies/managed
@@ -95,9 +97,11 @@ chown "$KIOSK_USER:$KIOSK_USER" "/home/${KIOSK_USER}/.bash_profile"
 chmod 0644 "/home/${KIOSK_USER}/.bash_profile"
 
 install -d -m 0700 -o "$KIOSK_USER" -g "$KIOSK_USER" "/home/${KIOSK_USER}/.config/kousen-kiosk"
+install -d -m 0700 -o "$KIOSK_USER" -g "$KIOSK_USER" "/home/${KIOSK_USER}/.config/openbox"
 install -d -m 0700 -o "$KIOSK_USER" -g "$KIOSK_USER" "/home/${KIOSK_USER}/.cache/kousen-kiosk"
 install -d -m 0700 -o "$KIOSK_USER" -g "$KIOSK_USER" "/home/${KIOSK_USER}/.local/share/kousen-kiosk"
 install -d -m 0700 -o "$KIOSK_USER" -g "$KIOSK_USER" "/home/${KIOSK_USER}/.local/share/applications"
+install -m 0644 -o "$KIOSK_USER" -g "$KIOSK_USER" "$REPO_DIR/openbox/rc.xml" "/home/${KIOSK_USER}/.config/openbox/rc.xml"
 chown -R "$KIOSK_USER:$KIOSK_USER" "/home/${KIOSK_USER}/.config" "/home/${KIOSK_USER}/.cache" "/home/${KIOSK_USER}/.local"
 
 for tty in 2 3 4 5 6; do

@@ -52,6 +52,26 @@ Chromium launches with:
 
 The systemd getty restarts the session if the browser exits.
 
+## Universal Home Key
+
+Openbox binds a small set of keyboard/media keys to:
+
+```sh
+/usr/local/bin/kousen-kiosk-home
+```
+
+That script uses `xdotool` to focus Chromium, select the address bar, and navigate back to `KIOSK_URL`.
+
+Default bindings:
+
+- `Home`
+- `XF86HomePage`
+- `Ctrl+Alt+Home`
+- `Super+Home`
+- `F12`
+
+If a physical remote sends a different key symbol, add another `<keybind>` entry to `openbox/rc.xml`.
+
 ## Network
 
 NetworkManager manages Ethernet and WiFi. The current repo includes an admin-run WiFi helper:

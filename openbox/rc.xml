@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openbox_config xmlns="http://openbox.org/3.4/rc">
+  <keyboard>
+    <keybind key="Home">
+      <action name="Execute">
+        <command>/usr/local/bin/kousen-kiosk-home</command>
+      </action>
+    </keybind>
+    <keybind key="XF86HomePage">
+      <action name="Execute">
+        <command>/usr/local/bin/kousen-kiosk-home</command>
+      </action>
+    </keybind>
+    <keybind key="C-A-Home">
+      <action name="Execute">
+        <command>/usr/local/bin/kousen-kiosk-home</command>
+      </action>
+    </keybind>
+    <keybind key="W-Home">
+      <action name="Execute">
+        <command>/usr/local/bin/kousen-kiosk-home</command>
+      </action>
+    </keybind>
+    <keybind key="F12">
+      <action name="Execute">
+        <command>/usr/local/bin/kousen-kiosk-home</command>
+      </action>
+    </keybind>
+  </keyboard>
+</openbox_config>
