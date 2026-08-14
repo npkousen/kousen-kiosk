@@ -18,6 +18,7 @@ The first implementation uses:
 - an unprivileged `kiosk` user
 - `.bash_profile` on tty1
 - `startx`
+- Openbox as a tiny window manager
 - Chromium in kiosk mode
 
 This is deliberately plain. It avoids a full desktop environment while staying easy to debug from a local keyboard or SSH.

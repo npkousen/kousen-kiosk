@@ -53,6 +53,11 @@ xset s off || true
 xset s noblank || true
 xset -dpms || true
 
+if command -v openbox >/dev/null 2>&1; then
+  openbox --sm-disable >/dev/null 2>&1 &
+  sleep 1
+fi
+
 if command -v xrandr >/dev/null 2>&1; then
   if [[ -n "$KIOSK_DISPLAY_OUTPUT" && -n "$KIOSK_DISPLAY_MODE" ]]; then
     xrandr --output "$KIOSK_DISPLAY_OUTPUT" --mode "$KIOSK_DISPLAY_MODE" --pos 0x0 --primary || true
@@ -85,7 +90,7 @@ if command -v unclutter >/dev/null 2>&1; then
 fi
 
 if command -v nm-online >/dev/null 2>&1; then
-  nm-online --quiet --timeout=20 || true
+  nm-online --quiet --timeout=60 || true
 fi
 
 WINDOW_SIZE_ARGS=()

@@ -37,6 +37,7 @@ apt-get install -y \
   "$CHROMIUM_PACKAGE" \
   dbus-x11 \
   network-manager \
+  openbox \
   unclutter \
   x11-xserver-utils \
   xinit \

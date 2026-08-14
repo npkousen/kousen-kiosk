@@ -63,6 +63,8 @@ sudo kousen-configure-wifi
 
 That command uses NetworkManager to scan for WiFi networks and save the selected connection.
 
+After WiFi is saved, you can unplug Ethernet and reboot. The kiosk waits up to 60 seconds for NetworkManager before opening Chromium, which avoids most first-boot "no internet" pages.
+
 ## Repo Layout
 
 - `scripts/install.sh` - provisions the kiosk on a fresh Linux install
