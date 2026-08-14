@@ -82,6 +82,22 @@ sudo kousen-configure-wifi
 
 A future first-boot web WiFi portal can be added later if needed. Keep that portal local-only and backed by a narrow privileged helper instead of giving the kiosk browser general system privileges.
 
+## Audio
+
+Chromium audio uses PipeWire/WirePlumber on the kiosk session. The installer also includes ALSA tools for hardware-level inspection.
+
+If HDMI is connected but silent, inspect sinks with:
+
+```sh
+kousen-configure-audio
+```
+
+Then set the HDMI sink as default with:
+
+```sh
+sudo kousen-configure-audio set-default <sink-id>
+```
+
 ## Why Not A Full Desktop
 
 A normal desktop makes it easier to escape the kiosk and creates update prompts, app launchers, notifications, and settings surfaces that are not needed for this appliance.

@@ -33,13 +33,17 @@ else
 fi
 
 apt-get install -y \
+  alsa-utils \
   ca-certificates \
   "$CHROMIUM_PACKAGE" \
   dbus-x11 \
   network-manager \
   openbox \
+  pipewire \
+  pipewire-pulse \
   python3 \
   unclutter \
+  wireplumber \
   x11-xserver-utils \
   xdotool \
   xinit \
@@ -75,6 +79,7 @@ touch /etc/kousen-kiosk/enabled
 install -m 0755 "$REPO_DIR/scripts/kousen-kiosk-browser.sh" /usr/local/bin/kousen-kiosk-browser
 install -m 0755 "$REPO_DIR/scripts/kousen-kiosk-home.sh" /usr/local/bin/kousen-kiosk-home
 install -m 0755 "$REPO_DIR/scripts/configure-wifi.sh" /usr/local/sbin/kousen-configure-wifi
+install -m 0755 "$REPO_DIR/scripts/configure-audio.sh" /usr/local/sbin/kousen-configure-audio
 
 install -d -m 0755 /etc/chromium/policies/managed
 install -m 0644 "$REPO_DIR/chromium/policies/managed/kousen-kiosk.json" /etc/chromium/policies/managed/kousen-kiosk.json

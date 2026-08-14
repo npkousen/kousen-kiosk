@@ -83,11 +83,28 @@ Default keybindings:
 
 These work from Plex, KousenTV, or any other current browser page because the shortcut is handled by Openbox outside the web app.
 
+## Audio
+
+The installer adds PipeWire, WirePlumber, and ALSA tools so Chromium can output through HDMI or the analog headphone jack.
+
+To inspect audio outputs:
+
+```sh
+kousen-configure-audio
+```
+
+If HDMI is not selected automatically, use the HDMI sink id shown by `wpctl status`:
+
+```sh
+sudo kousen-configure-audio set-default <sink-id>
+```
+
 ## Repo Layout
 
 - `scripts/install.sh` - provisions the kiosk on a fresh Linux install
 - `scripts/kousen-kiosk-browser.sh` - Chromium kiosk launcher
 - `scripts/configure-wifi.sh` - WiFi setup helper
+- `scripts/configure-audio.sh` - audio output inspection helper
 - `scripts/kousen-kiosk-home.sh` - universal return-home action
 - `scripts/disable-kiosk.sh` - removes kiosk auto-login for recovery
 - `openbox/rc.xml` - kiosk keyboard and remote shortcuts

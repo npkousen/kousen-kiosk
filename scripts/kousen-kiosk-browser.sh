@@ -11,6 +11,7 @@ LOG_FILE="$LOG_DIR/browser.log"
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_CACHE_HOME="$HOME/.cache"
 export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
 export CHROME_CRASHPAD_PIPE_NAME=""
 
 mkdir -p \
@@ -56,6 +57,21 @@ xset -dpms || true
 if command -v openbox >/dev/null 2>&1; then
   openbox --sm-disable >/dev/null 2>&1 &
   sleep 1
+fi
+
+if command -v pipewire >/dev/null 2>&1; then
+  if ! pgrep -u "$(id -u)" -x pipewire >/dev/null 2>&1; then
+    pipewire >/dev/null 2>&1 &
+    sleep 1
+  fi
+
+  if command -v pipewire-pulse >/dev/null 2>&1 && ! pgrep -u "$(id -u)" -x pipewire-pulse >/dev/null 2>&1; then
+    pipewire-pulse >/dev/null 2>&1 &
+  fi
+
+  if command -v wireplumber >/dev/null 2>&1 && ! pgrep -u "$(id -u)" -x wireplumber >/dev/null 2>&1; then
+    wireplumber >/dev/null 2>&1 &
+  fi
 fi
 
 if command -v xrandr >/dev/null 2>&1; then
