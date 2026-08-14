@@ -49,6 +49,7 @@ install -d -m 0755 /etc/kousen-kiosk
 cat > /etc/kousen-kiosk/config.env <<EOF
 KIOSK_URL="${KIOSK_URL}"
 EOF
+touch /etc/kousen-kiosk/enabled
 
 install -m 0755 "$REPO_DIR/scripts/kousen-kiosk-browser.sh" /usr/local/bin/kousen-kiosk-browser
 install -m 0755 "$REPO_DIR/scripts/configure-wifi.sh" /usr/local/sbin/kousen-configure-wifi
@@ -61,7 +62,10 @@ install -m 0644 "$REPO_DIR/systemd/getty@tty1.override.conf" /etc/systemd/system
 
 cat > "/home/${KIOSK_USER}/.bash_profile" <<'EOF'
 if [[ -z "${DISPLAY:-}" ]] && [[ "$(tty)" == "/dev/tty1" ]]; then
-  exec startx /usr/local/bin/kousen-kiosk-browser -- -nocursor -nolisten tcp
+  if [[ -f /etc/kousen-kiosk/enabled ]]; then
+    mkdir -p "$HOME/.local/share/kousen-kiosk"
+    exec startx /usr/local/bin/kousen-kiosk-browser -- -nolisten tcp >> "$HOME/.local/share/kousen-kiosk/startx.log" 2>&1
+  fi
 fi
 EOF
 
@@ -69,9 +73,10 @@ chown "$KIOSK_USER:$KIOSK_USER" "/home/${KIOSK_USER}/.bash_profile"
 chmod 0644 "/home/${KIOSK_USER}/.bash_profile"
 
 install -d -m 0700 -o "$KIOSK_USER" -g "$KIOSK_USER" "/home/${KIOSK_USER}/.config/kousen-kiosk"
+install -d -m 0700 -o "$KIOSK_USER" -g "$KIOSK_USER" "/home/${KIOSK_USER}/.local/share/kousen-kiosk"
 
 for tty in 2 3 4 5 6; do
-  systemctl mask "getty@tty${tty}.service" >/dev/null 2>&1 || true
+  systemctl unmask "getty@tty${tty}.service" >/dev/null 2>&1 || true
 done
 
 systemctl daemon-reload

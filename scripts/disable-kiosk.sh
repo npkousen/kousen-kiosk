@@ -9,6 +9,7 @@ if [[ "${EUID}" -ne 0 ]]; then
 fi
 
 systemctl revert getty@tty1.service
+rm -f /etc/kousen-kiosk/enabled
 
 for tty in 2 3 4 5 6; do
   systemctl unmask "getty@tty${tty}.service" >/dev/null 2>&1 || true

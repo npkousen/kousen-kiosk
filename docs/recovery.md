@@ -29,6 +29,7 @@ Stop the kiosk auto-login:
 ```sh
 sudo systemctl revert getty@tty1.service
 sudo systemctl unmask getty@tty2.service getty@tty3.service getty@tty4.service getty@tty5.service getty@tty6.service
+sudo rm -f /etc/kousen-kiosk/enabled
 sudo reboot
 ```
 
@@ -77,6 +78,7 @@ Manual equivalent:
 ```sh
 sudo systemctl revert getty@tty1.service
 sudo systemctl unmask getty@tty2.service getty@tty3.service getty@tty4.service getty@tty5.service getty@tty6.service
+sudo rm -f /etc/kousen-kiosk/enabled
 sudo rm -f /home/kiosk/.bash_profile
 sudo reboot
 ```
@@ -88,5 +90,7 @@ Useful commands:
 ```sh
 journalctl -b
 journalctl -u getty@tty1.service -b
+cat /home/kiosk/.local/share/kousen-kiosk/startx.log
+cat /home/kiosk/.local/share/kousen-kiosk/browser.log
 cat /home/kiosk/.local/share/xorg/Xorg.0.log
 ```

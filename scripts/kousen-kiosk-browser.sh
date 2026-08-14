@@ -3,6 +3,13 @@ set -euo pipefail
 
 CONFIG_FILE="/etc/kousen-kiosk/config.env"
 KIOSK_URL="${KIOSK_URL:-https://kousen.cc}"
+LOG_DIR="$HOME/.local/share/kousen-kiosk"
+LOG_FILE="$LOG_DIR/browser.log"
+
+mkdir -p "$LOG_DIR"
+exec >> "$LOG_FILE" 2>&1
+
+echo "=== $(date -Is) starting kousen kiosk browser ==="
 
 if [[ -f "$CONFIG_FILE" ]]; then
   # shellcheck source=/dev/null
@@ -21,6 +28,8 @@ find_chromium() {
 }
 
 CHROMIUM_BIN="$(find_chromium)"
+echo "Chromium binary: $CHROMIUM_BIN"
+echo "Kiosk URL: $KIOSK_URL"
 
 xset s off || true
 xset s noblank || true
@@ -34,7 +43,7 @@ if command -v nm-online >/dev/null 2>&1; then
   nm-online --quiet --timeout=20 || true
 fi
 
-exec "$CHROMIUM_BIN" \
+exec dbus-run-session "$CHROMIUM_BIN" \
   --kiosk "$KIOSK_URL" \
   --user-data-dir="$HOME/.config/kousen-kiosk/chromium" \
   --no-first-run \
