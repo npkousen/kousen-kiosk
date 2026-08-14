@@ -38,6 +38,18 @@ The GMKtec splash/logo is controlled by firmware. If the BIOS has a setting name
 
 Use HDMI for the first build. Confirm the kiosk boots correctly at the target TV or monitor resolution before locking the device away.
 
+## USB-C
+
+The NucBox 7 USB-C port should be treated as power input only. GMKtec's NucBox 7 manual labels the port as:
+
+```text
+Type-C DC IN ONLY
+```
+
+So USB-C DisplayPort Alt Mode / USB-C monitor video output should not be expected on this model. Use HDMI for video and HDMI audio.
+
+Some USB-C monitors may be able to power the mini PC, but that does not mean the port can also carry video or USB data.
+
 ## Keyboard
 
 Keep a USB keyboard available during setup and recovery. The final kiosk can run without one.
