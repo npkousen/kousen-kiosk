@@ -38,6 +38,7 @@ apt-get install -y \
   dbus-x11 \
   network-manager \
   openbox \
+  python3 \
   unclutter \
   x11-xserver-utils \
   xdotool \

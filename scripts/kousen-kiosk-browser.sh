@@ -105,6 +105,8 @@ exec dbus-run-session "$CHROMIUM_BIN" \
   "${WINDOW_SIZE_ARGS[@]}" \
   --force-device-scale-factor=1 \
   --high-dpi-support=1 \
+  --remote-debugging-address=127.0.0.1 \
+  --remote-debugging-port=9222 \
   --user-data-dir="$HOME/.config/kousen-kiosk/chromium" \
   --no-first-run \
   --no-default-browser-check \
