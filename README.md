@@ -2,6 +2,8 @@
 
 Kousen Kiosk turns a small Linux mini PC into a browser appliance for Kousen CommandCenter.
 
+This repo also includes a public project homepage in `index.html`. It can be served directly by GitHub Pages from the repository root.
+
 Target boot behavior:
 
 ```text
@@ -114,6 +116,7 @@ sudo kousen-configure-audio auto
 ## Repo Layout
 
 - `scripts/install.sh` - provisions the kiosk on a fresh Linux install
+- `index.html` - public project homepage and detailed install walkthrough
 - `scripts/kousen-kiosk-browser.sh` - Chromium kiosk launcher
 - `scripts/configure-wifi.sh` - WiFi setup helper
 - `scripts/configure-audio.sh` - audio output inspection helper

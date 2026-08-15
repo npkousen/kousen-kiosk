@@ -1,0 +1,937 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kousen Kiosk</title>
+  <meta name="description" content="A practical guide and installer for turning a small Debian mini PC into a locked browser kiosk for Kousen CommandCenter.">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b0f14;
+      --panel: #121923;
+      --panel-2: #182231;
+      --text: #edf2f7;
+      --muted: #aab7c6;
+      --line: #293648;
+      --blue: #4ea1ff;
+      --green: #53d18c;
+      --amber: #f0b84f;
+      --red: #f46d75;
+      --shadow: 0 18px 60px rgba(0, 0, 0, 0.35);
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 15% 5%, rgba(78, 161, 255, 0.18), transparent 28rem),
+        linear-gradient(180deg, #0b0f14 0%, #0d131c 48%, #111722 100%);
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    code {
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 0.08rem 0.3rem;
+      color: #f5f9ff;
+      font-size: 0.94em;
+    }
+
+    pre {
+      margin: 1rem 0 0;
+      overflow-x: auto;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius);
+      background: #080c11;
+      padding: 1rem;
+      color: #d8e8ff;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    }
+
+    pre code {
+      border: 0;
+      background: transparent;
+      padding: 0;
+      font-size: 0.93rem;
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 36px));
+      margin: 0 auto;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(11, 15, 20, 0.86);
+      backdrop-filter: blur(18px);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      min-height: 64px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      font-weight: 750;
+      letter-spacing: 0;
+      color: var(--text);
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 7px;
+      background: linear-gradient(135deg, #4ea1ff, #53d18c);
+      color: #061019;
+      font-weight: 900;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.94rem;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 430px);
+      gap: 2rem;
+      align-items: center;
+      min-height: calc(100vh - 64px);
+      padding: 5rem 0 3rem;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      width: fit-content;
+      margin-bottom: 1.2rem;
+      border: 1px solid rgba(83, 209, 140, 0.28);
+      border-radius: 999px;
+      background: rgba(83, 209, 140, 0.1);
+      padding: 0.35rem 0.7rem;
+      color: #c8f7dc;
+      font-size: 0.9rem;
+      font-weight: 650;
+    }
+
+    .pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 5px rgba(83, 209, 140, 0.16);
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 820px;
+      font-size: clamp(2.6rem, 5vw, 5.4rem);
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .hero-copy {
+      max-width: 760px;
+      margin: 1.35rem 0 0;
+      color: var(--muted);
+      font-size: 1.16rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-top: 2rem;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 7px;
+      padding: 0.72rem 1rem;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .button.primary {
+      border-color: rgba(78, 161, 255, 0.65);
+      background: #2d7dde;
+      color: white;
+    }
+
+    .device {
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(24, 34, 49, 0.92), rgba(12, 17, 24, 0.94));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .screen {
+      margin: 18px;
+      border: 1px solid #39475b;
+      border-radius: 6px;
+      background: #101720;
+      min-height: 320px;
+      overflow: hidden;
+    }
+
+    .screen-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0.9rem;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .screen-title {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-weight: 800;
+    }
+
+    .screen-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    .screen-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.8rem;
+      padding: 1rem;
+    }
+
+    .app-tile {
+      min-height: 98px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 7px;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 0.9rem;
+    }
+
+    .app-tile strong {
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    .app-tile span {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .boot-flow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.8rem;
+      margin-top: 1rem;
+    }
+
+    .boot-step {
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 7px;
+      background: rgba(255, 255, 255, 0.045);
+      padding: 0.8rem;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .boot-step strong {
+      display: block;
+      color: var(--text);
+      margin-bottom: 0.2rem;
+    }
+
+    main {
+      padding-bottom: 4rem;
+    }
+
+    section {
+      padding: 4rem 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .section-head {
+      max-width: 760px;
+      margin-bottom: 1.7rem;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(1.9rem, 3vw, 3rem);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .section-head p {
+      margin: 0.9rem 0 0;
+      color: var(--muted);
+      font-size: 1.04rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .card {
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: var(--radius);
+      background: rgba(18, 25, 35, 0.84);
+      padding: 1.2rem;
+      box-shadow: 0 10px 34px rgba(0, 0, 0, 0.18);
+    }
+
+    .card h3 {
+      margin: 0 0 0.55rem;
+      font-size: 1.05rem;
+    }
+
+    .card p,
+    .card li {
+      color: var(--muted);
+    }
+
+    .card p {
+      margin: 0;
+    }
+
+    .card ul {
+      margin: 0.7rem 0 0;
+      padding-left: 1.1rem;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      border-radius: 999px;
+      padding: 0.2rem 0.58rem;
+      background: rgba(78, 161, 255, 0.12);
+      color: #b9d9ff;
+      font-size: 0.8rem;
+      font-weight: 750;
+      margin-bottom: 0.75rem;
+    }
+
+    .install-list {
+      display: grid;
+      gap: 1rem;
+      counter-reset: steps;
+    }
+
+    .install-step {
+      display: grid;
+      grid-template-columns: 52px minmax(0, 1fr);
+      gap: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: var(--radius);
+      background: rgba(18, 25, 35, 0.88);
+      padding: 1.15rem;
+    }
+
+    .install-step::before {
+      counter-increment: steps;
+      content: counter(steps);
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 7px;
+      background: rgba(78, 161, 255, 0.18);
+      color: #d8ebff;
+      font-weight: 850;
+    }
+
+    .install-step h3 {
+      margin: 0;
+      font-size: 1.15rem;
+    }
+
+    .install-step p {
+      margin: 0.45rem 0 0;
+      color: var(--muted);
+    }
+
+    .choice-table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: var(--radius);
+      background: rgba(18, 25, 35, 0.84);
+    }
+
+    .choice-table th,
+    .choice-table td {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0.85rem;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .choice-table th {
+      color: #d8ebff;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+    }
+
+    .choice-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .choice-table td {
+      color: var(--muted);
+    }
+
+    .callout {
+      border-left: 4px solid var(--amber);
+      border-radius: 6px;
+      background: rgba(240, 184, 79, 0.1);
+      padding: 1rem;
+      color: #f7dfad;
+    }
+
+    .callout strong {
+      color: #ffe3a6;
+    }
+
+    .mini-terminal {
+      border: 1px solid rgba(83, 209, 140, 0.18);
+      border-radius: var(--radius);
+      background: #060a08;
+      padding: 1rem;
+      color: #bfffd9;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.92rem;
+    }
+
+    footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 2rem 0;
+      color: var(--muted);
+    }
+
+    @media (max-width: 880px) {
+      .hero,
+      .grid,
+      .grid.two,
+      .boot-flow {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        min-height: auto;
+        padding-top: 3rem;
+      }
+
+      .nav {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 0.8rem 0;
+      }
+
+      .nav-links {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 0.2rem;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .page {
+        width: min(100% - 24px, 1180px);
+      }
+
+      .install-step {
+        grid-template-columns: 1fr;
+      }
+
+      .choice-table,
+      .choice-table tbody,
+      .choice-table tr,
+      .choice-table td,
+      .choice-table th {
+        display: block;
+      }
+
+      .choice-table thead {
+        display: none;
+      }
+
+      .choice-table td {
+        padding: 0.75rem 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="page nav">
+      <a class="brand" href="#top" aria-label="Kousen Kiosk home">
+        <span class="brand-mark">K</span>
+        <span>Kousen Kiosk</span>
+      </a>
+      <nav class="nav-links" aria-label="Page sections">
+        <a href="#overview">Overview</a>
+        <a href="#hardware">Hardware</a>
+        <a href="#install">Install</a>
+        <a href="#operation">Operation</a>
+        <a href="#troubleshooting">Troubleshooting</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <div class="page hero">
+      <div>
+        <div class="eyebrow"><span class="pulse"></span> Debian mini PC browser appliance</div>
+        <h1>A locked kiosk that boots straight into Kousen CommandCenter.</h1>
+        <p class="hero-copy">
+          This project documents and automates the setup for a small Linux mini PC that powers on,
+          skips the desktop, launches Chromium in kiosk mode, and opens <code>https://kousen.cc</code>
+          as a family-friendly LAN command center.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="#install">Follow The Install</a>
+          <a class="button" href="https://github.com/npkousen/kousen-kiosk">View Repository</a>
+        </div>
+        <div class="boot-flow" aria-label="Boot flow">
+          <div class="boot-step"><strong>Power On</strong> BIOS hands off to Debian.</div>
+          <div class="boot-step"><strong>Auto Login</strong> An unprivileged user starts X.</div>
+          <div class="boot-step"><strong>Kiosk Browser</strong> Chromium opens full screen.</div>
+          <div class="boot-step"><strong>CommandCenter</strong> Cards launch Plex, KousenTV, and more.</div>
+        </div>
+      </div>
+
+      <aside class="device" aria-label="Kiosk screen preview">
+        <div class="screen">
+          <div class="screen-top">
+            <div class="screen-title"><span class="screen-dot"></span> Kousen CommandCenter</div>
+            <span>Home</span>
+          </div>
+          <div class="screen-grid">
+            <div class="app-tile">
+              <strong>KousenTV</strong>
+              <span>LAN video guide</span>
+            </div>
+            <div class="app-tile">
+              <strong>Plex</strong>
+              <span>Media server</span>
+            </div>
+            <div class="app-tile">
+              <strong>Music</strong>
+              <span>Future app slot</span>
+            </div>
+            <div class="app-tile">
+              <strong>Photos</strong>
+              <span>Future app slot</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section id="overview">
+      <div class="page">
+        <div class="section-head">
+          <h2>What This Project Does</h2>
+          <p>
+            Kousen Kiosk is the appliance layer for Kousen CommandCenter. It does not host the web app.
+            It configures a mini PC so the web app feels like the device's native interface.
+          </p>
+        </div>
+        <div class="grid">
+          <article class="card">
+            <span class="tag">Goal</span>
+            <h3>Single-purpose browser</h3>
+            <p>The device should boot directly into <code>https://kousen.cc</code> without exposing a normal desktop, launcher, file manager, or terminal to the kiosk user.</p>
+          </article>
+          <article class="card">
+            <span class="tag">Security</span>
+            <h3>Separate admin and kiosk users</h3>
+            <p>The installer creates an unprivileged <code>kiosk</code> account for the browser. Maintenance stays with the Debian admin user created during install.</p>
+          </article>
+          <article class="card">
+            <span class="tag">Recovery</span>
+            <h3>SSH stays available</h3>
+            <p>The first version keeps recovery practical. You can SSH into the admin user, pull repo updates, rerun the installer, or disable kiosk auto-login.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="hardware">
+      <div class="page">
+        <div class="section-head">
+          <h2>Hardware And Design Choices</h2>
+          <p>
+            The build was tested on a GMKtec NucBox 7 with an Intel Pentium Silver N6005, 16 GB RAM,
+            and a 1 TB M.2 2242 SATA SSD. The scripts are generic enough for other x86_64 mini PCs.
+          </p>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Why Debian minimal?</h3>
+            <p>Debian stable minimal is lean, predictable, and avoids a full desktop stack. Ubuntu Server LTS should also work, but Debian keeps this appliance setup simpler.</p>
+            <ul>
+              <li>No GNOME, KDE, XFCE, or other desktop environment</li>
+              <li>Only the display, browser, network, audio, and recovery pieces needed</li>
+              <li>Package-managed Chromium, Xorg, Openbox, NetworkManager, and PipeWire</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>USB-C limitation</h3>
+            <p>The NucBox 7 USB-C port should be treated as power input only. The manual labels it <code>Type-C DC IN ONLY</code>, so USB-C video output should not be expected.</p>
+            <ul>
+              <li>Use HDMI for video</li>
+              <li>Use HDMI, analog, or USB for audio</li>
+              <li>A USB-C monitor may power the device without carrying video</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="install">
+      <div class="page">
+        <div class="section-head">
+          <h2>Step-by-step Install</h2>
+          <p>
+            These are the installation choices used during the actual mini PC setup, rewritten as a repeatable guide.
+            The goal is a clean Debian install that can be managed over SSH and then converted into a kiosk.
+          </p>
+        </div>
+
+        <div class="install-list">
+          <article class="install-step">
+            <div>
+              <h3>Flash Debian to a USB installer</h3>
+              <p>Download the Debian stable <code>amd64</code> netinst ISO and flash it to an 8 GB or larger USB drive with a tool such as balenaEtcher. The <code>amd64</code> image is correct for normal 64-bit Intel and AMD mini PCs.</p>
+            </div>
+          </article>
+
+          <article class="install-step">
+            <div>
+              <h3>Boot the mini PC from USB</h3>
+              <p>Connect a monitor, keyboard, USB installer, and Ethernet if available. On the GMKtec box, use <code>F7</code> for the boot menu or <code>Esc</code> for BIOS/UEFI setup. Choose the USB installer.</p>
+            </div>
+          </article>
+
+          <article class="install-step">
+            <div>
+              <h3>Choose the primary network interface</h3>
+              <p>If Debian shows multiple interfaces, pick the wired Ethernet port that has the cable connected. On the tested box, Debian showed Realtek Ethernet interfaces such as <code>enp1s0</code> and <code>enp2s0</code>, plus Intel Wi-Fi such as <code>wlo1</code>. If DHCP fails, go back and try the other Ethernet port.</p>
+            </div>
+          </article>
+
+          <article class="install-step">
+            <div>
+              <h3>Lock direct root login</h3>
+              <p>When the installer asks for a root password, leave it blank. Debian will lock direct root login and grant administrative access to the first normal user through <code>sudo</code>.</p>
+            </div>
+          </article>
+
+          <article class="install-step">
+            <div>
+              <h3>Create the admin user</h3>
+              <p>Create a maintenance user for SSH, updates, recovery, WiFi setup, and future changes. In the tested install, the full name was <code>Kousen Admin</code> and the username was <code>kousen</code>. Do not name this user <code>kiosk</code>; the installer creates that browser-only user later.</p>
+            </div>
+          </article>
+
+          <article class="install-step">
+            <div>
+              <h3>Use the whole internal SSD</h3>
+              <p>Choose <code>Guided - use entire disk</code>, select the internal M.2 SATA SSD, and choose <code>All files in one partition</code>. Avoid encrypted LVM for this appliance because it would require a passphrase at boot.</p>
+            </div>
+          </article>
+
+          <article class="install-step">
+            <div>
+              <h3>Leave proxy blank</h3>
+              <p>When Debian asks for HTTP proxy information, leave it blank unless your network specifically requires a proxy.</p>
+            </div>
+          </article>
+
+          <article class="install-step">
+            <div>
+              <h3>Select only server utilities</h3>
+              <p>On the software selection screen, deselect <code>Debian desktop environment</code> and <code>GNOME</code>. Keep <code>SSH server</code> and <code>standard system utilities</code> selected.</p>
+            </div>
+          </article>
+
+          <article class="install-step">
+            <div>
+              <h3>Log in after reboot</h3>
+              <p>After the installer finishes and the mini PC reboots, log in as the admin user created earlier. At the shell prompt, install Git and clone the public repo.</p>
+              <pre><code>sudo apt-get update
+sudo apt-get install -y git ca-certificates
+git clone https://github.com/npkousen/kousen-kiosk.git
+cd kousen-kiosk</code></pre>
+            </div>
+          </article>
+
+          <article class="install-step">
+            <div>
+              <h3>Run the kiosk installer</h3>
+              <p>The installer provisions Chromium, Xorg, Openbox, NetworkManager, PipeWire, the home key, WiFi helper, audio helper, kiosk auto-login, and GRUB boot cleanup.</p>
+              <pre><code>sudo ./scripts/install.sh
+sudo reboot</code></pre>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="installer-choices">
+      <div class="page">
+        <div class="section-head">
+          <h2>Installer Screen Choices</h2>
+          <p>This table summarizes the choices made during the photographed Debian installation.</p>
+        </div>
+        <table class="choice-table">
+          <thead>
+            <tr>
+              <th>Installer screen</th>
+              <th>Recommended choice</th>
+              <th>Reason</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Primary network interface</td>
+              <td>Wired Ethernet first, Wi-Fi later</td>
+              <td>Ethernet makes the base install and first repo clone simpler. Wi-Fi is configured after the kiosk tools are installed.</td>
+            </tr>
+            <tr>
+              <td>Root password</td>
+              <td>Leave blank</td>
+              <td>Locks direct root login and uses the admin user with <code>sudo</code>.</td>
+            </tr>
+            <tr>
+              <td>Admin user</td>
+              <td>Use a normal maintenance account, not <code>kiosk</code></td>
+              <td>The installer owns the <code>kiosk</code> user and keeps it unprivileged.</td>
+            </tr>
+            <tr>
+              <td>Partition method</td>
+              <td><code>Guided - use entire disk</code></td>
+              <td>The device is a dedicated appliance. A plain install is easiest to recover.</td>
+            </tr>
+            <tr>
+              <td>Partition scheme</td>
+              <td><code>All files in one partition</code></td>
+              <td>Simple layout, no benefit from separate partitions for this use case.</td>
+            </tr>
+            <tr>
+              <td>HTTP proxy</td>
+              <td>Blank</td>
+              <td>Normal home networks do not need a proxy.</td>
+            </tr>
+            <tr>
+              <td>Software selection</td>
+              <td><code>SSH server</code> and <code>standard system utilities</code> only</td>
+              <td>A full desktop creates unwanted escape routes and UI surfaces.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="operation">
+      <div class="page">
+        <div class="section-head">
+          <h2>How The Finished Kiosk Works</h2>
+          <p>
+            After installation, the mini PC becomes a managed browser appliance rather than a general-purpose desktop.
+          </p>
+        </div>
+        <div class="grid">
+          <article class="card">
+            <h3>Boot polish</h3>
+            <p>The installer hides the GRUB menu, quiets Linux boot messages, and starts the kiosk session automatically on tty1.</p>
+          </article>
+          <article class="card">
+            <h3>Universal home key</h3>
+            <p><code>Home</code>, browser Home, <code>Ctrl+Alt+Home</code>, <code>Super+Home</code>, and <code>F12</code> return Chromium to <code>https://kousen.cc</code>, even from Plex.</p>
+          </article>
+          <article class="card">
+            <h3>WiFi</h3>
+            <p>Run <code>sudo kousen-configure-wifi</code>, choose the SSID, and enter the password. The saved connection persists across reboots.</p>
+          </article>
+          <article class="card">
+            <h3>Audio</h3>
+            <p>PipeWire and WirePlumber are started for Chromium. On boot, the kiosk prefers HDMI audio, then built-in analog, then the first available sink.</p>
+          </article>
+          <article class="card">
+            <h3>Bluetooth</h3>
+            <p>The tested hardware exposes a Bluetooth controller. A Bluetooth remote should work if it pairs as a keyboard or media remote.</p>
+          </article>
+          <article class="card">
+            <h3>Updates</h3>
+            <p>SSH into the admin account, run <code>git pull</code>, rerun <code>sudo ./scripts/install.sh</code>, and reboot. CommandCenter card updates happen in the separate CommandCenter repo.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="maintenance">
+      <div class="page">
+        <div class="section-head">
+          <h2>Useful Commands</h2>
+          <p>These are the commands used most often after the kiosk is installed.</p>
+        </div>
+        <div class="grid two">
+          <div>
+            <h3>Update the kiosk</h3>
+            <pre><code>ssh kousen@kousen-kiosk.local
+cd ~/kousen-kiosk
+git pull
+sudo ./scripts/install.sh
+sudo reboot</code></pre>
+          </div>
+          <div>
+            <h3>Configure WiFi</h3>
+            <pre><code>sudo kousen-configure-wifi
+ping -c 3 github.com
+sudo reboot</code></pre>
+          </div>
+          <div>
+            <h3>Inspect audio</h3>
+            <pre><code>sudo kousen-configure-audio
+sudo kousen-configure-audio auto</code></pre>
+          </div>
+          <div>
+            <h3>Disable kiosk auto-login</h3>
+            <pre><code>cd ~/kousen-kiosk
+sudo ./scripts/disable-kiosk.sh
+sudo reboot</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="troubleshooting">
+      <div class="page">
+        <div class="section-head">
+          <h2>Troubleshooting Notes From The Build</h2>
+          <p>
+            These are the real issues encountered during the first install and the fixes that were added to the repo.
+          </p>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>Chromium crashed to a blinking cursor</h3>
+            <p>Chromium failed before the page loaded because the minimal session was missing pieces it expected. The launcher now sets explicit XDG directories, disables crash reporter prompts, and runs Chromium through <code>dbus-run-session</code>.</p>
+          </article>
+          <article class="card">
+            <h3>Browser only filled half the screen</h3>
+            <p>X detected the monitor correctly, but Chromium behaved poorly under bare X. Openbox was added as a tiny window manager, and the launcher now detects the active display geometry with <code>xrandr</code>.</p>
+          </article>
+          <article class="card">
+            <h3>Network was not ready when Chromium opened</h3>
+            <p>The launcher waits up to 60 seconds for NetworkManager before opening the browser, which reduces first-boot offline pages on Wi-Fi.</p>
+          </article>
+          <article class="card">
+            <h3>Plex captured the home key</h3>
+            <p>The first home key used simulated typing, which Plex could capture in search. The current home key uses Chromium's localhost debugging API to navigate directly back to CommandCenter.</p>
+          </article>
+          <article class="card">
+            <h3>HDMI audio did not play</h3>
+            <p>ALSA saw HDMI hardware, but the minimal install had no PipeWire session. The installer now adds PipeWire, WirePlumber, and an automatic audio selector.</p>
+          </article>
+          <article class="card">
+            <h3>USB-C monitor showed no image</h3>
+            <p>The NucBox 7 USB-C port is power-only. Use HDMI for video. A USB-C monitor may power the mini PC while still requiring HDMI for picture and sound.</p>
+          </article>
+        </div>
+        <div class="callout" style="margin-top: 1rem;">
+          <strong>Public repo note:</strong> keep WiFi passwords, SSH private keys, tokens, VPN configs, and personal recovery notes out of this repository.
+          The scripts and public LAN shortcut patterns are fine to publish; credentials are not.
+        </div>
+      </div>
+    </section>
+
+    <section id="quick-reference">
+      <div class="page">
+        <div class="section-head">
+          <h2>Quick Reference</h2>
+          <p>A compact view of the working target state.</p>
+        </div>
+        <div class="mini-terminal">
+          boot target:       Debian minimal<br>
+          kiosk URL:         https://kousen.cc<br>
+          admin user:        created during Debian install<br>
+          kiosk user:        kiosk, created by installer, no sudo<br>
+          display:           HDMI, auto-detected by xrandr<br>
+          browser:           Chromium kiosk mode<br>
+          window manager:    Openbox<br>
+          network:           NetworkManager, Ethernet or WiFi<br>
+          audio:             PipeWire/WirePlumber, HDMI preferred<br>
+          home key:          Home / XF86HomePage / Ctrl+Alt+Home / Super+Home / F12<br>
+          update flow:       git pull -> sudo ./scripts/install.sh -> reboot
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="page">
+      Kousen Kiosk is a public appliance setup repo for Kousen CommandCenter. Hardware notes are specific to the tested GMKtec NucBox 7 unless stated otherwise.
+    </div>
+  </footer>
+</body>
+</html>
