@@ -7,3 +7,6 @@
 # Local notes that may contain LAN or credential details.
 local-notes/
 *.local
+
+# Local design drafts and source artwork.
+assets/drafts/
