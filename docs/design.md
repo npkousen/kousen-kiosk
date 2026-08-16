@@ -60,7 +60,7 @@ Openbox binds a small set of keyboard/media keys to:
 /usr/local/bin/kousen-kiosk-home
 ```
 
-That script uses `xdotool` to focus Chromium, select the address bar, and navigate back to `KIOSK_URL`.
+That script first uses Chromium's localhost debugging API to open `KIOSK_URL` in a fresh tab and close old page tabs. If that API is unavailable, it falls back to `xdotool` address-bar navigation.
 
 Default bindings:
 

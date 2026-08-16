@@ -93,7 +93,7 @@ if command -v xrandr >/dev/null 2>&1; then
 
   if [[ -z "$KIOSK_DISPLAY_MODE" ]]; then
     connected_line="$(printf '%s\n' "$XRANDR_QUERY" | awk -v output="$KIOSK_DISPLAY_OUTPUT" '$1 == output && / connected / { print; exit }')"
-    KIOSK_DISPLAY_MODE="$(printf '%s\n' "$connected_line" | grep -Eo '[0-9]+x[0-9]+\\+[0-9]+\\+[0-9]+' | head -n 1 | cut -d+ -f1 || true)"
+    KIOSK_DISPLAY_MODE="$(printf '%s\n' "$connected_line" | grep -Eo '[0-9]+x[0-9]+\+[0-9]+\+[0-9]+' | head -n 1 | cut -d+ -f1 || true)"
   fi
 fi
 

@@ -18,6 +18,11 @@ if ! command -v apt-get >/dev/null 2>&1; then
   exit 1
 fi
 
+if [[ ! "$KIOSK_USER" =~ ^[a-z_][a-z0-9_-]*[$]?$ ]]; then
+  echo "KIOSK_USER must be a valid system username." >&2
+  exit 1
+fi
+
 export DEBIAN_FRONTEND=noninteractive
 
 apt-get update
@@ -86,7 +91,10 @@ install -d -m 0755 /etc/chromium/policies/managed
 install -m 0644 "$REPO_DIR/chromium/policies/managed/kousen-kiosk.json" /etc/chromium/policies/managed/kousen-kiosk.json
 
 install -d -m 0755 /etc/systemd/system/getty@tty1.service.d
-install -m 0644 "$REPO_DIR/systemd/getty@tty1.override.conf" /etc/systemd/system/getty@tty1.service.d/override.conf
+sed "s/--autologin kiosk /--autologin ${KIOSK_USER} /" \
+  "$REPO_DIR/systemd/getty@tty1.override.conf" \
+  > /etc/systemd/system/getty@tty1.service.d/override.conf
+chmod 0644 /etc/systemd/system/getty@tty1.service.d/override.conf
 
 cat > "/home/${KIOSK_USER}/.bash_profile" <<'EOF'
 if [[ -z "${DISPLAY:-}" ]] && [[ "$(tty)" == "/dev/tty1" ]]; then

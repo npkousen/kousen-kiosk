@@ -46,7 +46,7 @@ The installer will:
 - install the browser launcher
 - install Chromium managed policies
 - configure tty1 auto-login for the `kiosk` user
-- disable extra local getty prompts on tty2 through tty6
+- leave tty2 through tty6 available for local recovery
 - disable screen blanking in the kiosk session
 
 ## 5. Reboot

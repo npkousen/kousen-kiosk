@@ -14,7 +14,7 @@ If that does not work, switch to another TTY:
 Ctrl+Alt+F2
 ```
 
-The installer masks tty2 through tty6 for kiosk hardening, so this may not be available unless you unmask a TTY first.
+The installer leaves tty2 through tty6 available for local recovery.
 
 ## SSH Recovery
 

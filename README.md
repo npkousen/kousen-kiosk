@@ -140,3 +140,7 @@ Plex     -> http://192.168.10.10:32400/web
 ```
 
 This repo does not host CommandCenter. It configures the mini PC that displays it.
+
+## License
+
+This project is open source under the MIT License. See `LICENSE` for details.
