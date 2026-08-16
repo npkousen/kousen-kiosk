@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0f14">
+  <title>Privacy Policy | Kousen Kiosk</title>
+  <link rel="canonical" href="https://kousenkiosk.com/privacy/">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b0f14;
+      --panel: rgba(18, 25, 35, 0.9);
+      --panel-strong: rgba(8, 12, 17, 0.9);
+      --text: #edf2f7;
+      --muted: #aab7c6;
+      --line: rgba(255, 255, 255, 0.1);
+      --blue: #4ea1ff;
+      --green: #53d18c;
+      --shadow: 0 18px 60px rgba(0, 0, 0, 0.35);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      background:
+        radial-gradient(circle at 15% 5%, rgba(78, 161, 255, 0.18), transparent 28rem),
+        linear-gradient(180deg, #0b0f14 0%, #0d131c 48%, #111722 100%);
+      color: var(--text);
+      line-height: 1.62;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    a:hover,
+    a:focus-visible {
+      text-decoration: underline;
+    }
+
+    .shell {
+      width: min(920px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 32px 0;
+    }
+
+    .topbar,
+    .policy {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .topbar {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 14px 18px;
+      border-radius: 8px 8px 0 0;
+      border-bottom: 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      color: var(--text);
+      font-weight: 800;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--blue), var(--green));
+      color: #061019;
+      font-weight: 900;
+      flex: 0 0 auto;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: clamp(1.2rem, 3vw, 1.65rem);
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .home-link {
+      min-height: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 14px;
+      border-radius: 8px;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .home-link:focus-visible {
+      outline: 4px solid #ffffff;
+      outline-offset: 3px;
+    }
+
+    .policy {
+      padding: clamp(22px, 4vw, 38px);
+      border-radius: 0 0 8px 8px;
+    }
+
+    .eyebrow,
+    .meta {
+      color: var(--muted);
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    p {
+      max-width: 74ch;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 3rem);
+      line-height: 1.02;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin: 30px 0 8px;
+      color: var(--text);
+      font-size: 1.08rem;
+      line-height: 1.25;
+    }
+
+    p {
+      margin: 0 0 14px;
+    }
+
+    .lede {
+      margin-top: 16px;
+      color: #dbe5f2;
+      font-size: 1.04rem;
+    }
+
+    .meta {
+      margin-top: 18px;
+      font-size: 0.92rem;
+    }
+
+    ul {
+      max-width: 74ch;
+      margin: 0 0 16px 22px;
+      padding: 0;
+    }
+
+    li + li {
+      margin-top: 6px;
+    }
+
+    .note {
+      max-width: 74ch;
+      margin-top: 22px;
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--panel-strong);
+    }
+
+    @media (max-width: 640px) {
+      .shell {
+        width: min(100% - 24px, 920px);
+        padding: 12px 0;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .home-link {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="../" aria-label="Kousen Kiosk home">
+        <span class="brand-mark">K</span>
+        <span class="brand-title">Kousen Kiosk</span>
+      </a>
+      <a class="home-link" href="../">Back Home</a>
+    </header>
+
+    <article class="policy">
+      <p class="eyebrow">Privacy Policy</p>
+      <h1>Kousen Kiosk keeps appliance setup data on your own device.</h1>
+      <p class="lede">
+        This policy applies to Kousen Kiosk, the open-source appliance setup project and public documentation site available at kousenkiosk.com.
+      </p>
+      <p class="meta"><strong>Last updated:</strong> August 16, 2026</p>
+
+      <h2>1. Information The Project Handles</h2>
+      <p>
+        Kousen Kiosk may handle local appliance setup details such as the kiosk URL, display output, display mode,
+        browser window size, audio sink selection, WiFi configuration, and local browser profile data created while
+        using Chromium on the kiosk device.
+      </p>
+
+      <h2>2. Local Device Storage</h2>
+      <p>
+        The installer writes configuration files and logs on the kiosk device. These can include the kiosk URL,
+        display settings, browser startup logs, audio selection logs, and home-key activity logs. These files are
+        stored locally on the device unless you choose to copy, back up, or share them.
+      </p>
+      <p>
+        Chromium may also store normal browser profile data on the kiosk device, such as cache, local storage,
+        cookies, permissions, and other site data created by websites the kiosk opens.
+      </p>
+
+      <h2>3. WiFi and Network Configuration</h2>
+      <p>
+        If you use the WiFi helper, NetworkManager stores the selected network connection on the Linux device.
+        WiFi passwords and other connection details are managed by the operating system, not by kousenkiosk.com.
+        Do not commit WiFi passwords, SSH keys, tokens, or private network notes to the public repository.
+      </p>
+
+      <h2>4. No Kousen Kiosk Accounts or Backend</h2>
+      <p>
+        Kousen Kiosk does not require user accounts and does not include its own hosted backend database for collecting
+        appliance setup information. The public documentation site does not receive, store, or manage your local kiosk
+        configuration through the project itself.
+      </p>
+
+      <h2>5. CommandCenter and App Links</h2>
+      <p>
+        The default kiosk URL opens Kousen CommandCenter at kousen.cc. CommandCenter and any app cards, media services,
+        LAN tools, or third-party sites opened from the kiosk may handle data according to their own privacy policies
+        and browser behavior.
+      </p>
+
+      <h2>6. Hosting and Technical Logs</h2>
+      <p>
+        When kousenkiosk.com is hosted publicly, the hosting provider may process standard technical request data needed
+        to deliver the site, such as IP address, browser details, timestamps, requested paths, and basic server or CDN logs.
+      </p>
+
+      <h2>7. Cookies, Analytics, and Tracking</h2>
+      <p>
+        Kousen Kiosk does not intentionally include advertising trackers, analytics dashboards, or behavioral profiling tools.
+        Essential browser and hosting mechanisms may still be used to load static files securely and reliably.
+      </p>
+
+      <h2>8. Data Security</h2>
+      <p>
+        Because kiosk setup data and browser data are generally stored on your own device, protecting access to the device,
+        Linux admin account, SSH access, and Chromium browser profile is important. Avoid storing sensitive secrets in kiosk
+        URLs, local notes, browser pages, or public repository files.
+      </p>
+
+      <h2>9. Children's Privacy</h2>
+      <p>
+        Kousen Kiosk is not directed to children under 13, and kousenkiosk.com does not knowingly collect personal
+        information from children through Kousen Kiosk's local-first setup tools.
+      </p>
+
+      <h2>10. Changes to This Policy</h2>
+      <p>
+        This Privacy Policy may be updated from time to time. The revised version will be posted on this page with a new
+        "Last updated" date.
+      </p>
+
+      <h2>11. Contact</h2>
+      <p>If you have questions about this Privacy Policy, contact:</p>
+      <ul>
+        <li><strong>Email:</strong> <a href="mailto:support@kousen.cc">support@kousen.cc</a></li>
+        <li><strong>Website:</strong> <a href="https://kousenkiosk.com/">https://kousenkiosk.com/</a></li>
+      </ul>
+
+      <div class="note">
+        <strong>Plain-English summary:</strong> Kousen Kiosk is a static documentation site and local appliance setup repo.
+        The kiosk configuration, logs, WiFi connection, and Chromium browser data live on your own Linux device by default,
+        while public hosting may still create routine technical access logs.
+      </div>
+    </article>
+  </main>
+</body>
+</html>
