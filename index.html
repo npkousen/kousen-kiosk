@@ -117,14 +117,11 @@
     }
 
     .brand-mark {
-      display: grid;
-      place-items: center;
       width: 34px;
       height: 34px;
       border-radius: 7px;
-      background: linear-gradient(135deg, #4ea1ff, #53d18c);
-      color: #061019;
-      font-weight: 900;
+      object-fit: cover;
+      flex: 0 0 auto;
     }
 
     .nav-links {
@@ -531,7 +528,7 @@
   <header>
     <div class="page nav">
       <a class="brand" href="#top" aria-label="Kousen Kiosk home">
-        <span class="brand-mark">K</span>
+        <img class="brand-mark" src="assets/logo.png" alt="">
         <span>Kousen Kiosk</span>
       </a>
       <nav class="nav-links" aria-label="Page sections">
