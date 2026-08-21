@@ -39,6 +39,18 @@ Optional URL override:
 sudo KIOSK_URL="https://kousen.cc" ./scripts/install.sh
 ```
 
+Optional remote-control support:
+
+```sh
+sudo ./scripts/install.sh --include-remote
+```
+
+That installs the public `kousen-remote` package and its Bluetooth/Python dependencies without requiring GitHub credentials. It does not enable the `kousen-remote` systemd service until a paired remote device address is supplied:
+
+```sh
+sudo ./scripts/install.sh --include-remote --remote-device XX:XX:XX:XX:XX:XX
+```
+
 The installer will:
 
 - install Chromium, Xorg, xinit, unclutter, and NetworkManager
@@ -48,6 +60,7 @@ The installer will:
 - configure tty1 auto-login for the `kiosk` user
 - leave tty2 through tty6 available for local recovery
 - disable screen blanking in the kiosk session
+- optionally install and configure `kousen-remote`
 
 ## 5. Reboot
 
@@ -84,6 +97,18 @@ cd kousen-kiosk
 git pull
 sudo ./scripts/install.sh
 sudo reboot
+```
+
+If the kiosk uses `kousen-remote`, keep including it during updates:
+
+```sh
+sudo ./scripts/install.sh --include-remote
+```
+
+If the service is configured for a paired remote, include the device address:
+
+```sh
+sudo ./scripts/install.sh --include-remote --remote-device XX:XX:XX:XX:XX:XX
 ```
 
 ## Updating CommandCenter Cards

@@ -824,7 +824,11 @@ sudo reboot</code></pre>
           </article>
           <article class="card">
             <h3>Bluetooth</h3>
-            <p>The tested hardware exposes a Bluetooth controller. A Bluetooth remote should work if it pairs as a keyboard or media remote.</p>
+            <p>The tested hardware exposes a Bluetooth controller. Optional <code>kousen-remote</code> support can be installed for supported Bluetooth remotes.</p>
+          </article>
+          <article class="card">
+            <h3>Kousen Remote</h3>
+            <p>Run <code>sudo ./scripts/install.sh --include-remote</code> to install the public remote package. Add <code>--remote-device</code> after pairing a remote to enable its systemd service.</p>
           </article>
           <article class="card">
             <h3>Updates</h3>
@@ -859,6 +863,11 @@ sudo reboot</code></pre>
             <h3>Inspect audio</h3>
             <pre><code>sudo kousen-configure-audio
 sudo kousen-configure-audio auto</code></pre>
+          </div>
+          <div>
+            <h3>Install remote support</h3>
+            <pre><code>sudo ./scripts/install.sh --include-remote
+sudo ./scripts/install.sh --include-remote --remote-device XX:XX:XX:XX:XX:XX</code></pre>
           </div>
           <div>
             <h3>Disable kiosk auto-login</h3>

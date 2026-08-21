@@ -85,6 +85,28 @@ Default keybindings:
 
 These work from Plex, KousenTV, or any other current browser page because the shortcut is handled by Openbox outside the web app.
 
+## Optional Kousen Remote
+
+The installer can optionally include [`kousen-remote`](https://github.com/npkousen/kousen-remote), a standalone Linux service that turns a supported Bluetooth remote into normal keyboard/media input.
+
+Install or refresh the remote CLI and dependencies:
+
+```sh
+sudo ./scripts/install.sh --include-remote
+```
+
+That does not enable the remote service yet because the service needs a paired remote device address. After pairing a remote, rerun with:
+
+```sh
+sudo ./scripts/install.sh --include-remote --remote-device XX:XX:XX:XX:XX:XX
+```
+
+To install and enable the service without starting it immediately:
+
+```sh
+sudo ./scripts/install.sh --include-remote --remote-device XX:XX:XX:XX:XX:XX --remote-no-start
+```
+
 ## Audio
 
 The installer adds PipeWire, WirePlumber, and ALSA tools so Chromium can output through HDMI, analog headphones, or USB audio.
@@ -121,6 +143,7 @@ sudo kousen-configure-audio auto
 - `scripts/configure-wifi.sh` - WiFi setup helper
 - `scripts/configure-audio.sh` - audio output inspection helper
 - `scripts/kousen-kiosk-home.sh` - universal return-home action
+- `scripts/install-kousen-remote.sh` - optional kousen-remote installer
 - `scripts/disable-kiosk.sh` - removes kiosk auto-login for recovery
 - `openbox/rc.xml` - kiosk keyboard and remote shortcuts
 - `systemd/getty@tty1.override.conf` - auto-login config for the kiosk user

@@ -72,6 +72,26 @@ Default bindings:
 
 If a physical remote sends a different key symbol, add another `<keybind>` entry to `openbox/rc.xml`.
 
+## Optional Remote Service
+
+`kousen-remote` is intentionally optional because a fresh kiosk may not have a remote paired yet.
+
+The kiosk installer supports:
+
+```sh
+sudo ./scripts/install.sh --include-remote
+```
+
+That clones the public `npkousen/kousen-remote` repo, installs its CLI and dependencies, and enables Bluetooth. It does not create the runtime service until the paired remote address is known.
+
+After pairing a compatible remote:
+
+```sh
+sudo ./scripts/install.sh --include-remote --remote-device XX:XX:XX:XX:XX:XX
+```
+
+The service is managed separately as `kousen-remote.service` and emits normal Linux input events through the mapping in `kousen-remote`.
+
 ## Network
 
 NetworkManager manages Ethernet and WiFi. The current repo includes an admin-run WiFi helper:

@@ -6,7 +6,59 @@ KIOSK_URL="${KIOSK_URL:-https://kousen.cc}"
 KIOSK_DISPLAY_OUTPUT="${KIOSK_DISPLAY_OUTPUT:-}"
 KIOSK_DISPLAY_MODE="${KIOSK_DISPLAY_MODE:-}"
 KIOSK_WINDOW_SIZE="${KIOSK_WINDOW_SIZE:-}"
+INCLUDE_REMOTE=0
+REMOTE_NO_START=0
+KOUSEN_REMOTE_DEVICE="${KOUSEN_REMOTE_DEVICE:-}"
+KOUSEN_REMOTE_REPO="${KOUSEN_REMOTE_REPO:-https://github.com/npkousen/kousen-remote.git}"
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+usage() {
+  cat <<'EOF'
+Usage: sudo ./scripts/install.sh [options]
+
+Options:
+  --include-remote       Also install the public kousen-remote package.
+  --remote-device VALUE  Paired Bluetooth remote address or BlueZ object path.
+                         Requires --include-remote to configure the service.
+  --remote-no-start      Enable kousen-remote.service but do not start it now.
+  -h, --help             Show this help.
+
+Environment overrides:
+  KIOSK_USER, KIOSK_URL, KIOSK_DISPLAY_OUTPUT, KIOSK_DISPLAY_MODE,
+  KIOSK_WINDOW_SIZE, KOUSEN_REMOTE_REPO, KOUSEN_REMOTE_DEVICE
+EOF
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --include-remote)
+      INCLUDE_REMOTE=1
+      shift
+      ;;
+    --remote-device)
+      KOUSEN_REMOTE_DEVICE="${2:?missing value for --remote-device}"
+      shift 2
+      ;;
+    --remote-no-start)
+      REMOTE_NO_START=1
+      shift
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      echo "Unknown argument: $1" >&2
+      usage >&2
+      exit 2
+      ;;
+  esac
+done
+
+if [[ -n "${KOUSEN_REMOTE_DEVICE}" && "${INCLUDE_REMOTE}" -ne 1 ]]; then
+  echo "--remote-device requires --include-remote." >&2
+  exit 2
+fi
 
 if [[ "${EUID}" -ne 0 ]]; then
   echo "Run with sudo: sudo ./scripts/install.sh" >&2
@@ -86,6 +138,7 @@ install -m 0755 "$REPO_DIR/scripts/kousen-kiosk-home.sh" /usr/local/bin/kousen-k
 install -m 0755 "$REPO_DIR/scripts/kousen-kiosk-audio.sh" /usr/local/bin/kousen-kiosk-audio
 install -m 0755 "$REPO_DIR/scripts/configure-wifi.sh" /usr/local/sbin/kousen-configure-wifi
 install -m 0755 "$REPO_DIR/scripts/configure-audio.sh" /usr/local/sbin/kousen-configure-audio
+install -m 0755 "$REPO_DIR/scripts/install-kousen-remote.sh" /usr/local/sbin/kousen-install-remote
 
 install -d -m 0755 /etc/chromium/policies/managed
 install -m 0644 "$REPO_DIR/chromium/policies/managed/kousen-kiosk.json" /etc/chromium/policies/managed/kousen-kiosk.json
@@ -126,9 +179,28 @@ done
 systemctl daemon-reload
 systemctl enable getty@tty1.service
 
+if [[ "${INCLUDE_REMOTE}" -eq 1 ]]; then
+  remote_args=(--repo "${KOUSEN_REMOTE_REPO}")
+  if [[ -n "${KOUSEN_REMOTE_DEVICE}" ]]; then
+    remote_args+=(--device "${KOUSEN_REMOTE_DEVICE}")
+  fi
+  if [[ "${REMOTE_NO_START}" -eq 1 ]]; then
+    remote_args+=(--no-start)
+  fi
+  "$REPO_DIR/scripts/install-kousen-remote.sh" "${remote_args[@]}"
+fi
+
 echo "Kousen Kiosk installed."
 echo "Kiosk user: ${KIOSK_USER}"
 echo "Kiosk URL:  ${KIOSK_URL}"
+if [[ "${INCLUDE_REMOTE}" -eq 1 ]]; then
+  echo "Kousen Remote: installed"
+  if [[ -n "${KOUSEN_REMOTE_DEVICE}" ]]; then
+    echo "Remote device: ${KOUSEN_REMOTE_DEVICE}"
+  else
+    echo "Remote service: not configured; rerun with --remote-device after pairing."
+  fi
+fi
 if [[ -n "${KIOSK_DISPLAY_OUTPUT}" || -n "${KIOSK_DISPLAY_MODE}" ]]; then
   echo "Display:    ${KIOSK_DISPLAY_OUTPUT:-auto} ${KIOSK_DISPLAY_MODE:-auto}"
 fi
