@@ -114,11 +114,23 @@ profile_dir="\${KOUSEN_REMOTE_PROFILE_DIR:-${install_dir}/profiles}"
 remote_bin="${install_dir}/.venv/bin/kousen-remote"
 
 show_devices() {
-  if timeout 10 "\${remote_bin}" --profiles "\${profile_dir}" devices "\$@"; then
+  output_file="\$(mktemp)"
+  if timeout 10 "\${remote_bin}" --profiles "\${profile_dir}" devices "\$@" >"\${output_file}"; then
+    if [[ -s "\${output_file}" ]]; then
+      cat "\${output_file}"
+      rm -f "\${output_file}"
+      return 0
+    fi
+
+    rm -f "\${output_file}"
+    echo "No scored remote candidates found; showing raw Bluetooth devices instead." >&2
+    bluetoothctl devices
     return 0
   fi
 
   status="\$?"
+  cat "\${output_file}" || true
+  rm -f "\${output_file}"
   if [[ "\${status}" == "124" ]]; then
     echo "kousen-remote device scoring timed out; showing raw Bluetooth devices instead." >&2
     bluetoothctl devices
