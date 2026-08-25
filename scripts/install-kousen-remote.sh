@@ -176,10 +176,9 @@ if [[ "\${1:-}" == "scan" ]]; then
     sleep "\${seconds}"
     printf 'scan off\n'
     printf 'quit\n'
-  } | bluetoothctl >/dev/null
+  } | bluetoothctl
 
-  show_devices "\${devices_args[@]}"
-  exit "\$?"
+  exit 0
 fi
 
 exec "\${remote_bin}" --profiles "\${profile_dir}" "\$@"
