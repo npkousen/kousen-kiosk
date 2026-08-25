@@ -137,11 +137,14 @@ if [[ "\${1:-}" == "scan" ]]; then
     esac
   done
 
-  bluetoothctl power on >/dev/null
-  bluetoothctl pairable on >/dev/null || true
-  bluetoothctl scan on >/dev/null
-  sleep "\${seconds}"
-  bluetoothctl scan off >/dev/null || true
+  {
+    printf 'power on\n'
+    printf 'pairable on\n'
+    printf 'scan on\n'
+    sleep "\${seconds}"
+    printf 'scan off\n'
+    printf 'quit\n'
+  } | bluetoothctl >/dev/null
   exec "\${remote_bin}" --profiles "\${profile_dir}" devices "\${devices_args[@]}"
 fi
 
