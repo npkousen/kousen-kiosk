@@ -107,6 +107,21 @@ To install and enable the service without starting it immediately:
 sudo ./scripts/install.sh --include-remote --remote-device XX:XX:XX:XX:XX:XX --remote-no-start
 ```
 
+To find an Apple Siri Remote before pairing:
+
+```sh
+kousen-remote find --seconds 30
+```
+
+Put the remote close to the mini PC and hold `Back/Menu + Volume Up` for about 5 seconds while the finder runs. A strong pre-pairing match looks like:
+
+```text
+Likely Siri Remote candidate: E0:C3:EA:A4:3E:05 score=85
+Matched: Apple manufacturer data 0x004c; Bluetooth HID service 00001812-0000-1000-8000-00805f9b34fb; HID remote-control appearance 0x03c0
+```
+
+Pair that address, then rerun the kiosk installer with `--remote-device`.
+
 ## Audio
 
 The installer adds PipeWire, WirePlumber, and ALSA tools so Chromium can output through HDMI, analog headphones, or USB audio.
@@ -114,8 +129,10 @@ The installer adds PipeWire, WirePlumber, and ALSA tools so Chromium can output 
 On each kiosk boot, audio is selected automatically:
 
 ```text
-HDMI -> built-in analog -> first available sink
+HDMI / USB-C display audio -> built-in analog -> first available sink
 ```
+
+USB-C DisplayPort audio usually appears to Linux as an HDMI digital audio device. If ALSA sees HDMI audio but PipeWire is still on analog, the kiosk audio helper switches to an available digital profile before selecting the sink.
 
 To inspect audio outputs:
 
@@ -134,6 +151,8 @@ To rerun the automatic selector without rebooting:
 ```sh
 sudo kousen-configure-audio auto
 ```
+
+Current behavior prefers display audio when both display audio and the 3.5 mm jack are available. A future tablet-style mode may add headphone jack detection so plugged-in headphones can override built-in or display speakers.
 
 ## Repo Layout
 
