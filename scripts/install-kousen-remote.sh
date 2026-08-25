@@ -111,7 +111,41 @@ cat > /usr/local/bin/kousen-remote <<EOF
 set -euo pipefail
 
 profile_dir="\${KOUSEN_REMOTE_PROFILE_DIR:-${install_dir}/profiles}"
-exec "${install_dir}/.venv/bin/kousen-remote" --profiles "\${profile_dir}" "\$@"
+remote_bin="${install_dir}/.venv/bin/kousen-remote"
+
+if [[ "\${1:-}" == "scan" ]]; then
+  shift
+  seconds="8"
+  devices_args=()
+  while [[ \$# -gt 0 ]]; do
+    case "\$1" in
+      --seconds)
+        seconds="\${2:?missing value for --seconds}"
+        shift 2
+        ;;
+      --all)
+        devices_args+=(--all)
+        shift
+        ;;
+      --no-hid-filter)
+        shift
+        ;;
+      *)
+        echo "Unknown scan argument: \$1" >&2
+        exit 2
+        ;;
+    esac
+  done
+
+  bluetoothctl power on >/dev/null
+  bluetoothctl pairable on >/dev/null || true
+  bluetoothctl scan on >/dev/null
+  sleep "\${seconds}"
+  bluetoothctl scan off >/dev/null || true
+  exec "\${remote_bin}" --profiles "\${profile_dir}" devices "\${devices_args[@]}"
+fi
+
+exec "\${remote_bin}" --profiles "\${profile_dir}" "\$@"
 EOF
 chmod 0755 /usr/local/bin/kousen-remote
 
