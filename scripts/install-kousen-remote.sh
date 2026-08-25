@@ -113,6 +113,26 @@ set -euo pipefail
 profile_dir="\${KOUSEN_REMOTE_PROFILE_DIR:-${install_dir}/profiles}"
 remote_bin="${install_dir}/.venv/bin/kousen-remote"
 
+show_devices() {
+  if timeout 10 "\${remote_bin}" --profiles "\${profile_dir}" devices "\$@"; then
+    return 0
+  fi
+
+  status="\$?"
+  if [[ "\${status}" == "124" ]]; then
+    echo "kousen-remote device scoring timed out; showing raw Bluetooth devices instead." >&2
+    bluetoothctl devices
+    return 0
+  fi
+  return "\${status}"
+}
+
+if [[ "\${1:-}" == "devices" ]]; then
+  shift
+  show_devices "\$@"
+  exit "\$?"
+fi
+
 if [[ "\${1:-}" == "scan" ]]; then
   shift
   seconds="8"
@@ -145,7 +165,9 @@ if [[ "\${1:-}" == "scan" ]]; then
     printf 'scan off\n'
     printf 'quit\n'
   } | bluetoothctl >/dev/null
-  exec "\${remote_bin}" --profiles "\${profile_dir}" devices "\${devices_args[@]}"
+
+  show_devices "\${devices_args[@]}"
+  exit "\$?"
 fi
 
 exec "\${remote_bin}" --profiles "\${profile_dir}" "\$@"
