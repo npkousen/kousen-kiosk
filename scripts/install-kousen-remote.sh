@@ -105,7 +105,15 @@ tar \
 
 python3 -m venv --system-site-packages "${install_dir}/.venv"
 "${install_dir}/.venv/bin/python" -m pip install --no-deps -e "${install_dir}"
-ln -sf "${install_dir}/.venv/bin/kousen-remote" /usr/local/bin/kousen-remote
+
+cat > /usr/local/bin/kousen-remote <<EOF
+#!/usr/bin/env bash
+set -euo pipefail
+
+profile_dir="\${KOUSEN_REMOTE_PROFILE_DIR:-${install_dir}/profiles}"
+exec "${install_dir}/.venv/bin/kousen-remote" --profiles "\${profile_dir}" "\$@"
+EOF
+chmod 0755 /usr/local/bin/kousen-remote
 
 echo "Installed kousen-remote CLI at /usr/local/bin/kousen-remote"
 
