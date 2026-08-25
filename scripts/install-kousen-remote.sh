@@ -145,10 +145,62 @@ if [[ "\${1:-}" == "devices" ]]; then
   exit "\$?"
 fi
 
+inspect_scan_candidates() {
+  scan_log="\${1:?missing scan log}"
+  found=0
+
+  while IFS= read -r address; do
+    [[ -n "\${address}" ]] || continue
+    info="\$(bluetoothctl info "\${address}" 2>/dev/null || true)"
+    [[ -n "\${info}" ]] || continue
+
+    score=0
+    matches=()
+    if grep -qi 'ManufacturerData.Key: 0x004c' <<<"\${info}"; then
+      score=\$((score + 35))
+      matches+=("Apple manufacturer data 0x004c")
+    fi
+    if grep -qi '00001812-0000-1000-8000-00805f9b34fb' <<<"\${info}"; then
+      score=\$((score + 30))
+      matches+=("Bluetooth HID service 00001812")
+    fi
+    if grep -qi 'Appearance: 0x03c0' <<<"\${info}"; then
+      score=\$((score + 20))
+      matches+=("HID remote-control appearance 0x03c0")
+    fi
+    if grep -qi 'bluetooth:v004Cp0315d0001' <<<"\${info}"; then
+      score=\$((score + 50))
+      matches+=("Siri Remote modalias v004c/p0315")
+    fi
+
+    if [[ "\${score}" -gt 0 ]]; then
+      found=1
+      if [[ "\${score}" -ge 55 ]]; then
+        echo
+        echo "Likely Siri Remote candidate: \${address}  score=\${score}"
+      else
+        echo
+        echo "Possible Apple/HID candidate: \${address}  score=\${score}"
+      fi
+      printf '  Matched:'
+      printf ' %s;' "\${matches[@]}"
+      printf '\n'
+      echo "\${info}" | sed -n '/Alias:/p;/Appearance:/p;/Paired:/p;/Bonded:/p;/Trusted:/p;/Connected:/p;/UUID:/p;/ManufacturerData.Key:/,+2p;/Modalias:/p'
+    fi
+  done < <(awk '/^\[(NEW|CHG)\] Device/ { print \$3 }' "\${scan_log}" | sort -u)
+
+  if [[ "\${found}" -eq 0 ]]; then
+    echo
+    echo "No Apple HID remote candidates found."
+    echo "For a Siri Remote, put it in pairing mode near this PC: Back/Menu + Volume Up for 5 seconds."
+  fi
+}
+
 if [[ "\${1:-}" == "scan" ]]; then
   shift
   seconds="8"
   devices_args=()
+  no_hid_filter=0
   while [[ \$# -gt 0 ]]; do
     case "\$1" in
       --seconds)
@@ -160,6 +212,7 @@ if [[ "\${1:-}" == "scan" ]]; then
         shift
         ;;
       --no-hid-filter)
+        no_hid_filter=1
         shift
         ;;
       *)
@@ -169,15 +222,24 @@ if [[ "\${1:-}" == "scan" ]]; then
     esac
   done
 
+  scan_log="\$(mktemp)"
   {
     printf 'power on\n'
     printf 'pairable on\n'
+    if [[ "\${no_hid_filter}" -eq 0 ]]; then
+      printf 'menu scan\n'
+      printf 'transport le\n'
+      printf 'uuids 00001812-0000-1000-8000-00805f9b34fb\n'
+      printf 'back\n'
+    fi
     printf 'scan on\n'
     sleep "\${seconds}"
     printf 'scan off\n'
     printf 'quit\n'
-  } | bluetoothctl
+  } | bluetoothctl | tee "\${scan_log}"
 
+  inspect_scan_candidates "\${scan_log}"
+  rm -f "\${scan_log}"
   exit 0
 fi
 
