@@ -64,6 +64,16 @@ The GMKtec splash/logo is controlled by firmware. If the BIOS has a setting name
 
 Use HDMI for the first build. Confirm the kiosk boots correctly at the target TV or monitor resolution before locking the device away.
 
+Kousen Kiosk defaults to `KIOSK_UI_SCALE=auto`. The browser launcher reads the connected display through `xrandr`; small portable monitors stay at `1x`, while large 4K-class TV panels receive a higher Chromium device scale factor for couch-distance readability.
+
+If a display reports incorrect physical dimensions or the automatic choice feels wrong, pin a fixed scale in `/etc/kousen-kiosk/config.env`:
+
+```sh
+KIOSK_UI_SCALE="2"
+```
+
+Then reboot, or restart the kiosk session. Useful values are `1`, `1.25`, `1.5`, `1.75`, and `2`.
+
 ## USB-C
 
 The NucBox 7 USB-C port should be treated as power input only. GMKtec's NucBox 7 manual labels the port as:

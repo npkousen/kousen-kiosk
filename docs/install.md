@@ -39,6 +39,14 @@ Optional URL override:
 sudo KIOSK_URL="https://kousen.cc" ./scripts/install.sh
 ```
 
+Optional UI scale override:
+
+```sh
+sudo KIOSK_UI_SCALE="2" ./scripts/install.sh
+```
+
+The default is `KIOSK_UI_SCALE=auto`. Auto mode keeps small portable monitors at native scale and enlarges Chromium on large high-resolution TV panels. Use `1`, `1.25`, `1.5`, `1.75`, or `2` if a specific display needs a fixed value.
+
 Optional remote-control support:
 
 ```sh

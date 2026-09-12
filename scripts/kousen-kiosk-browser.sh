@@ -6,6 +6,7 @@ KIOSK_URL="${KIOSK_URL:-https://kousen.cc}"
 KIOSK_DISPLAY_OUTPUT="${KIOSK_DISPLAY_OUTPUT:-}"
 KIOSK_DISPLAY_MODE="${KIOSK_DISPLAY_MODE:-}"
 KIOSK_WINDOW_SIZE="${KIOSK_WINDOW_SIZE:-}"
+KIOSK_UI_SCALE="${KIOSK_UI_SCALE:-auto}"
 LOG_DIR="$HOME/.local/share/kousen-kiosk"
 LOG_FILE="$LOG_DIR/browser.log"
 export XDG_CONFIG_HOME="$HOME/.config"
@@ -35,6 +36,71 @@ fi
 KIOSK_DISPLAY_OUTPUT="${KIOSK_DISPLAY_OUTPUT:-}"
 KIOSK_DISPLAY_MODE="${KIOSK_DISPLAY_MODE:-}"
 KIOSK_WINDOW_SIZE="${KIOSK_WINDOW_SIZE:-}"
+KIOSK_UI_SCALE="${KIOSK_UI_SCALE:-auto}"
+
+resolve_ui_scale() {
+  local requested_scale="$1"
+  local display_mode="$2"
+  local display_line="$3"
+  local width=""
+  local height=""
+  local width_mm=""
+  local height_mm=""
+  local diagonal_in=""
+
+  if [[ "$requested_scale" != "auto" ]]; then
+    if [[ "$requested_scale" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
+      printf '%s\n' "$requested_scale"
+    else
+      echo "Invalid KIOSK_UI_SCALE '$requested_scale'; falling back to 1" >&2
+      printf '1\n'
+    fi
+    return 0
+  fi
+
+  if [[ "$display_mode" =~ ^([0-9]+)x([0-9]+)$ ]]; then
+    width="${BASH_REMATCH[1]}"
+    height="${BASH_REMATCH[2]}"
+  else
+    printf '1\n'
+    return 0
+  fi
+
+  if [[ -n "$display_line" ]]; then
+    read -r width_mm height_mm < <(
+      awk '{
+        for (i = 1; i <= NF - 2; i++) {
+          if ($i ~ /^[0-9]+mm$/ && $(i + 1) == "x" && $(i + 2) ~ /^[0-9]+mm$/) {
+            gsub("mm", "", $i)
+            gsub("mm", "", $(i + 2))
+            print $i, $(i + 2)
+            exit
+          }
+        }
+      }' <<<"$display_line"
+    ) || true
+  fi
+
+  if [[ -n "$width_mm" && -n "$height_mm" && "$width_mm" -gt 0 && "$height_mm" -gt 0 ]]; then
+    diagonal_in="$(awk -v w="$width_mm" -v h="$height_mm" 'BEGIN { printf "%.1f", sqrt((w * w) + (h * h)) / 25.4 }')"
+    awk -v px="$width" -v diag="$diagonal_in" 'BEGIN {
+      if (px >= 3800 && diag >= 65) print "2";
+      else if (px >= 3800 && diag >= 50) print "1.75";
+      else if (px >= 3000 && diag >= 40) print "1.5";
+      else if (px >= 2500 && diag >= 32) print "1.25";
+      else print "1";
+    }'
+    return 0
+  fi
+
+  if [[ "$width" -ge 3800 ]]; then
+    printf '1.5\n'
+  elif [[ "$width" -ge 3000 ]]; then
+    printf '1.25\n'
+  else
+    printf '1\n'
+  fi
+}
 
 find_chromium() {
   local candidate
@@ -94,6 +160,8 @@ if command -v xrandr >/dev/null 2>&1; then
   if [[ -z "$KIOSK_DISPLAY_MODE" ]]; then
     connected_line="$(printf '%s\n' "$XRANDR_QUERY" | awk -v output="$KIOSK_DISPLAY_OUTPUT" '$1 == output && / connected / { print; exit }')"
     KIOSK_DISPLAY_MODE="$(printf '%s\n' "$connected_line" | grep -Eo '[0-9]+x[0-9]+\+[0-9]+\+[0-9]+' | head -n 1 | cut -d+ -f1 || true)"
+  else
+    connected_line="$(printf '%s\n' "$XRANDR_QUERY" | awk -v output="$KIOSK_DISPLAY_OUTPUT" '$1 == output && / connected / { print; exit }')"
   fi
 fi
 
@@ -101,9 +169,12 @@ if [[ -z "$KIOSK_WINDOW_SIZE" && "$KIOSK_DISPLAY_MODE" =~ ^[0-9]+x[0-9]+$ ]]; th
   KIOSK_WINDOW_SIZE="${KIOSK_DISPLAY_MODE/x/,}"
 fi
 
+KIOSK_EFFECTIVE_UI_SCALE="$(resolve_ui_scale "$KIOSK_UI_SCALE" "$KIOSK_DISPLAY_MODE" "${connected_line:-}")"
+
 echo "Display output: ${KIOSK_DISPLAY_OUTPUT:-auto}"
 echo "Display mode: ${KIOSK_DISPLAY_MODE:-auto}"
 echo "Window size: ${KIOSK_WINDOW_SIZE:-auto}"
+echo "UI scale: ${KIOSK_UI_SCALE} -> ${KIOSK_EFFECTIVE_UI_SCALE}"
 
 if command -v unclutter >/dev/null 2>&1; then
   unclutter -idle 0.5 -root >/dev/null 2>&1 &
@@ -123,7 +194,7 @@ exec dbus-run-session "$CHROMIUM_BIN" \
   --start-fullscreen \
   --window-position=0,0 \
   "${WINDOW_SIZE_ARGS[@]}" \
-  --force-device-scale-factor=1 \
+  --force-device-scale-factor="$KIOSK_EFFECTIVE_UI_SCALE" \
   --high-dpi-support=1 \
   --remote-debugging-address=127.0.0.1 \
   --remote-debugging-port=9222 \

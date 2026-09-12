@@ -50,6 +50,15 @@ Chromium launches with:
 - no password storage prompts
 - disabled restore prompts
 
+The launcher uses `KIOSK_UI_SCALE=auto` by default. Auto mode reads `xrandr` output after display setup and maps high-resolution physical display size to a Chromium device scale factor:
+
+```text
+small / portable displays -> 1x
+large 4K TV panels        -> 1.5x to 2x
+```
+
+This keeps the 16-inch portable monitor behavior close to native while making a 75-inch 4K TV usable from couch distance. If EDID physical dimensions are missing, auto mode falls back to a conservative resolution-based scale. Set `KIOSK_UI_SCALE` to a numeric value in `/etc/kousen-kiosk/config.env` to override the heuristic.
+
 The systemd getty restarts the session if the browser exits.
 
 ## Universal Home Key

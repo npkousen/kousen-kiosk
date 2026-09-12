@@ -55,6 +55,14 @@ Override the URL during install:
 sudo KIOSK_URL="https://kousen.cc" ./scripts/install.sh
 ```
 
+Optional UI scale override:
+
+```sh
+sudo KIOSK_UI_SCALE="2" ./scripts/install.sh
+```
+
+By default `KIOSK_UI_SCALE` is `auto`. The launcher inspects the connected display and keeps small/portable monitors at `1x`, while scaling large high-resolution TV panels so Chromium and web apps are readable from across the room. Use a numeric override such as `1`, `1.5`, or `2` only when a specific display needs a fixed setting.
+
 ## WiFi
 
 For first setup, use the admin account or SSH and run:
