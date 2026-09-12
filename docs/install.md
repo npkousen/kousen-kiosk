@@ -47,6 +47,14 @@ sudo KIOSK_UI_SCALE="2" ./scripts/install.sh
 
 The default is `KIOSK_UI_SCALE=auto`. Auto mode keeps small portable monitors at native scale and enlarges Chromium on large high-resolution TV panels. Use `1`, `1.25`, `1.5`, `1.75`, or `2` if a specific display needs a fixed value.
 
+Optional on-screen display detail level:
+
+```sh
+sudo KIOSK_OSD_LEVEL="detailed" ./scripts/install.sh
+```
+
+The default is `KIOSK_OSD_LEVEL=normal`, which shows TV-style feedback for volume, mute, play/pause, and home events. Use `detailed` while troubleshooting remote mappings to show every event sent to the OSD.
+
 Optional remote-control support:
 
 ```sh
@@ -62,6 +70,7 @@ sudo ./scripts/install.sh --include-remote --remote-device XX:XX:XX:XX:XX:XX
 The installer will:
 
 - install Chromium, Xorg, xinit, unclutter, and NetworkManager
+- install the kiosk OSD and volume/media helpers
 - create the `kiosk` user if needed
 - install the browser launcher
 - install Chromium managed policies

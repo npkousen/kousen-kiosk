@@ -7,6 +7,7 @@ KIOSK_DISPLAY_OUTPUT="${KIOSK_DISPLAY_OUTPUT:-}"
 KIOSK_DISPLAY_MODE="${KIOSK_DISPLAY_MODE:-}"
 KIOSK_WINDOW_SIZE="${KIOSK_WINDOW_SIZE:-}"
 KIOSK_UI_SCALE="${KIOSK_UI_SCALE:-auto}"
+KIOSK_OSD_LEVEL="${KIOSK_OSD_LEVEL:-normal}"
 INCLUDE_REMOTE=0
 REMOTE_NO_START=0
 KOUSEN_REMOTE_DEVICE="${KOUSEN_REMOTE_DEVICE:-}"
@@ -26,7 +27,7 @@ Options:
 
 Environment overrides:
   KIOSK_USER, KIOSK_URL, KIOSK_DISPLAY_OUTPUT, KIOSK_DISPLAY_MODE,
-  KIOSK_WINDOW_SIZE, KIOSK_UI_SCALE, KOUSEN_REMOTE_REPO,
+  KIOSK_WINDOW_SIZE, KIOSK_UI_SCALE, KIOSK_OSD_LEVEL, KOUSEN_REMOTE_REPO,
   KOUSEN_REMOTE_DEVICE
 EOF
 }
@@ -101,6 +102,7 @@ apt-get install -y \
   pipewire \
   pipewire-pulse \
   python3 \
+  python3-tk \
   unclutter \
   wireplumber \
   x11-xserver-utils \
@@ -133,12 +135,16 @@ KIOSK_DISPLAY_OUTPUT="${KIOSK_DISPLAY_OUTPUT}"
 KIOSK_DISPLAY_MODE="${KIOSK_DISPLAY_MODE}"
 KIOSK_WINDOW_SIZE="${KIOSK_WINDOW_SIZE}"
 KIOSK_UI_SCALE="${KIOSK_UI_SCALE}"
+KIOSK_OSD_LEVEL="${KIOSK_OSD_LEVEL}"
 EOF
 touch /etc/kousen-kiosk/enabled
 
 install -m 0755 "$REPO_DIR/scripts/kousen-kiosk-browser.sh" /usr/local/bin/kousen-kiosk-browser
 install -m 0755 "$REPO_DIR/scripts/kousen-kiosk-home.sh" /usr/local/bin/kousen-kiosk-home
 install -m 0755 "$REPO_DIR/scripts/kousen-kiosk-audio.sh" /usr/local/bin/kousen-kiosk-audio
+install -m 0755 "$REPO_DIR/scripts/kousen-kiosk-osd" /usr/local/bin/kousen-kiosk-osd
+install -m 0755 "$REPO_DIR/scripts/kousen-kiosk-volume.sh" /usr/local/bin/kousen-kiosk-volume
+install -m 0755 "$REPO_DIR/scripts/kousen-kiosk-media.sh" /usr/local/bin/kousen-kiosk-media
 install -m 0755 "$REPO_DIR/scripts/configure-wifi.sh" /usr/local/sbin/kousen-configure-wifi
 install -m 0755 "$REPO_DIR/scripts/configure-audio.sh" /usr/local/sbin/kousen-configure-audio
 install -m 0755 "$REPO_DIR/scripts/install-kousen-remote.sh" /usr/local/sbin/kousen-install-remote
@@ -211,4 +217,5 @@ if [[ -n "${KIOSK_WINDOW_SIZE}" ]]; then
   echo "Window:     ${KIOSK_WINDOW_SIZE}"
 fi
 echo "UI scale:   ${KIOSK_UI_SCALE}"
+echo "OSD level:  ${KIOSK_OSD_LEVEL}"
 echo "Reboot to enter kiosk mode: sudo reboot"

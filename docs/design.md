@@ -81,6 +81,45 @@ Default bindings:
 
 If a physical remote sends a different key symbol, add another `<keybind>` entry to `openbox/rc.xml`.
 
+## On-Screen Display
+
+The kiosk owns a small X11 OSD layer because button feedback is device-level behavior, not a feature of a specific browser app. A page such as CommandCenter, KousenTV, or Plex should not need to know that the user changed volume or pressed Home.
+
+The OSD entry point is:
+
+```sh
+/usr/local/bin/kousen-kiosk-osd
+```
+
+It starts a persistent Tk/X11 overlay server on first use and sends later events over a per-user Unix socket. This avoids spawning overlapping windows during rapid volume changes.
+
+Configured level:
+
+```text
+KIOSK_OSD_LEVEL=normal   -> volume, mute, play/pause, home
+KIOSK_OSD_LEVEL=detailed -> every event sent to the OSD
+```
+
+Normal mode is intended for day-to-day TV use. Detailed mode is intended for troubleshooting remote mappings, including cases where `kousen-remote` maps buttons to function keys or other synthetic values.
+
+Openbox captures the hardware volume keys and runs:
+
+```sh
+/usr/local/bin/kousen-kiosk-volume up
+/usr/local/bin/kousen-kiosk-volume down
+/usr/local/bin/kousen-kiosk-volume mute
+```
+
+That wrapper changes the default PipeWire sink through `wpctl`, then displays the current volume or mute state. The Home action also emits a `home` OSD event before navigating Chromium back to `KIOSK_URL`.
+
+Play/pause is intentionally exposed as an OSD command instead of being captured globally by Openbox by default:
+
+```sh
+/usr/local/bin/kousen-kiosk-media play-pause
+```
+
+Apps such as Plex need to receive media keys directly. `kousen-remote` can send a side-channel OSD event while still emitting the normal media key to Chromium.
+
 ## Optional Remote Service
 
 `kousen-remote` is intentionally optional because a fresh kiosk may not have a remote paired yet.

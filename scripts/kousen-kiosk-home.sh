@@ -18,6 +18,10 @@ mkdir -p "$LOG_DIR"
   echo "Kiosk URL: $KIOSK_URL"
 } >> "$LOG_FILE"
 
+if command -v kousen-kiosk-osd >/dev/null 2>&1; then
+  kousen-kiosk-osd home || true
+fi
+
 if command -v python3 >/dev/null 2>&1; then
   if python3 - "$KIOSK_URL" >> "$LOG_FILE" 2>&1 <<'PY'
 import json

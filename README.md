@@ -63,6 +63,14 @@ sudo KIOSK_UI_SCALE="2" ./scripts/install.sh
 
 By default `KIOSK_UI_SCALE` is `auto`. The launcher inspects the connected display and keeps small/portable monitors at `1x`, while scaling large high-resolution TV panels so Chromium and web apps are readable from across the room. Use a numeric override such as `1`, `1.5`, or `2` only when a specific display needs a fixed setting.
 
+Optional on-screen display detail level:
+
+```sh
+sudo KIOSK_OSD_LEVEL="detailed" ./scripts/install.sh
+```
+
+By default `KIOSK_OSD_LEVEL` is `normal`. Normal mode shows TV-style overlays for volume, mute, play/pause, and home events. Detailed mode shows every event sent to the OSD, including arbitrary button names and values, which is useful while testing remote mappings.
+
 ## WiFi
 
 For first setup, use the admin account or SSH and run:
@@ -92,6 +100,28 @@ Default keybindings:
 - `F12`
 
 These work from Plex, KousenTV, or any other current browser page because the shortcut is handled by Openbox outside the web app.
+
+## On-Screen Display
+
+The kiosk includes a lightweight system OSD for TV-style feedback in the top right corner. Hardware volume keys are handled at the kiosk layer with PipeWire, so volume and mute feedback works across CommandCenter, KousenTV, Plex, and other browser pages.
+
+Default Openbox OSD bindings:
+
+- `XF86AudioRaiseVolume`
+- `XF86AudioLowerVolume`
+- `XF86AudioMute`
+- `Home` / `XF86HomePage` / configured home shortcuts
+
+The OSD can also be called directly:
+
+```sh
+kousen-kiosk-osd volume 72
+kousen-kiosk-osd mute on
+kousen-kiosk-osd play-pause
+kousen-kiosk-osd button SiriRemote.Select hid_key=KEY_ENTER
+```
+
+`normal` mode suppresses arbitrary button events. Set `KIOSK_OSD_LEVEL="detailed"` in `/etc/kousen-kiosk/config.env` to show every event, including remapped function-key values from `kousen-remote`.
 
 ## Optional Kousen Remote
 
@@ -167,6 +197,9 @@ Current behavior prefers display audio when both display audio and the 3.5 mm ja
 - `scripts/install.sh` - provisions the kiosk on a fresh Linux install
 - `index.html` - public project homepage and detailed install walkthrough
 - `scripts/kousen-kiosk-browser.sh` - Chromium kiosk launcher
+- `scripts/kousen-kiosk-osd` - system on-screen display overlay
+- `scripts/kousen-kiosk-volume.sh` - universal volume/mute handler with OSD feedback
+- `scripts/kousen-kiosk-media.sh` - OSD helper for remote/media side-channel events
 - `scripts/configure-wifi.sh` - WiFi setup helper
 - `scripts/configure-audio.sh` - audio output inspection helper
 - `scripts/kousen-kiosk-home.sh` - universal return-home action
