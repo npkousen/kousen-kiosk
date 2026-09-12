@@ -46,6 +46,23 @@ digital_sink_id() {
   ' "$status_file"
 }
 
+wait_for_digital_sink() {
+  local sink_id=""
+
+  for _ in 1 2 3 4 5 6 7 8 9 10; do
+    sink_id="$(digital_sink_id)"
+    if [[ -n "$sink_id" ]]; then
+      printf '%s\n' "$sink_id"
+      return 0
+    fi
+
+    sleep 1
+    refresh_status || true
+  done
+
+  return 1
+}
+
 available_digital_profile() {
   pw-cli enum-params "$1" EnumProfile 2>/dev/null | awk '
     function emit_if_match() {
@@ -121,8 +138,7 @@ maybe_enable_digital_profile() {
 
     echo "Switching audio device $device_id to digital profile $profile_index"
     if wpctl set-profile "$device_id" "$profile_index"; then
-      sleep 1
-      refresh_status || true
+      wait_for_digital_sink >/dev/null || true
       return 0
     fi
   done
