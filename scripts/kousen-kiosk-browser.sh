@@ -142,10 +142,6 @@ if command -v pipewire >/dev/null 2>&1; then
   fi
 fi
 
-if command -v kousen-kiosk-audio >/dev/null 2>&1; then
-  kousen-kiosk-audio || true
-fi
-
 if command -v xrandr >/dev/null 2>&1; then
   if [[ -n "$KIOSK_DISPLAY_OUTPUT" && -n "$KIOSK_DISPLAY_MODE" ]]; then
     DISPLAY_ARGS=(--output "$KIOSK_DISPLAY_OUTPUT" --mode "$KIOSK_DISPLAY_MODE" --pos 0x0 --primary)
@@ -169,6 +165,10 @@ if command -v xrandr >/dev/null 2>&1; then
   else
     connected_line="$(printf '%s\n' "$XRANDR_QUERY" | awk -v output="$KIOSK_DISPLAY_OUTPUT" '$1 == output && / connected / { print; exit }')"
   fi
+
+  if [[ -n "$KIOSK_DISPLAY_OUTPUT" ]]; then
+    xrandr --output "$KIOSK_DISPLAY_OUTPUT" --set audio on || true
+  fi
 fi
 
 if [[ -z "$KIOSK_WINDOW_SIZE" && "$KIOSK_DISPLAY_MODE" =~ ^[0-9]+x[0-9]+$ ]]; then
@@ -182,6 +182,13 @@ echo "Display mode: ${KIOSK_DISPLAY_MODE:-auto}"
 echo "Display rate: ${KIOSK_DISPLAY_RATE:-auto}"
 echo "Window size: ${KIOSK_WINDOW_SIZE:-auto}"
 echo "UI scale: ${KIOSK_UI_SCALE} -> ${KIOSK_EFFECTIVE_UI_SCALE}"
+
+# A display mode change can recreate the PipeWire HDMI sink. Select audio only
+# after RandR has settled so Chromium starts against the final sink.
+sleep 2
+if command -v kousen-kiosk-audio >/dev/null 2>&1; then
+  kousen-kiosk-audio || true
+fi
 
 if command -v unclutter >/dev/null 2>&1; then
   unclutter -idle 0.5 -root >/dev/null 2>&1 &
