@@ -5,6 +5,7 @@ CONFIG_FILE="/etc/kousen-kiosk/config.env"
 KIOSK_URL="${KIOSK_URL:-https://kousen.cc}"
 KIOSK_DISPLAY_OUTPUT="${KIOSK_DISPLAY_OUTPUT:-}"
 KIOSK_DISPLAY_MODE="${KIOSK_DISPLAY_MODE:-}"
+KIOSK_DISPLAY_RATE="${KIOSK_DISPLAY_RATE:-}"
 KIOSK_WINDOW_SIZE="${KIOSK_WINDOW_SIZE:-}"
 KIOSK_UI_SCALE="${KIOSK_UI_SCALE:-auto}"
 LOG_DIR="$HOME/.local/share/kousen-kiosk"
@@ -35,6 +36,7 @@ fi
 
 KIOSK_DISPLAY_OUTPUT="${KIOSK_DISPLAY_OUTPUT:-}"
 KIOSK_DISPLAY_MODE="${KIOSK_DISPLAY_MODE:-}"
+KIOSK_DISPLAY_RATE="${KIOSK_DISPLAY_RATE:-}"
 KIOSK_WINDOW_SIZE="${KIOSK_WINDOW_SIZE:-}"
 KIOSK_UI_SCALE="${KIOSK_UI_SCALE:-auto}"
 
@@ -146,7 +148,11 @@ fi
 
 if command -v xrandr >/dev/null 2>&1; then
   if [[ -n "$KIOSK_DISPLAY_OUTPUT" && -n "$KIOSK_DISPLAY_MODE" ]]; then
-    xrandr --output "$KIOSK_DISPLAY_OUTPUT" --mode "$KIOSK_DISPLAY_MODE" --pos 0x0 --primary || true
+    DISPLAY_ARGS=(--output "$KIOSK_DISPLAY_OUTPUT" --mode "$KIOSK_DISPLAY_MODE" --pos 0x0 --primary)
+    if [[ -n "$KIOSK_DISPLAY_RATE" ]]; then
+      DISPLAY_ARGS+=(--rate "$KIOSK_DISPLAY_RATE")
+    fi
+    xrandr "${DISPLAY_ARGS[@]}" || true
   else
     xrandr --auto || true
   fi
@@ -173,6 +179,7 @@ KIOSK_EFFECTIVE_UI_SCALE="$(resolve_ui_scale "$KIOSK_UI_SCALE" "$KIOSK_DISPLAY_M
 
 echo "Display output: ${KIOSK_DISPLAY_OUTPUT:-auto}"
 echo "Display mode: ${KIOSK_DISPLAY_MODE:-auto}"
+echo "Display rate: ${KIOSK_DISPLAY_RATE:-auto}"
 echo "Window size: ${KIOSK_WINDOW_SIZE:-auto}"
 echo "UI scale: ${KIOSK_UI_SCALE} -> ${KIOSK_EFFECTIVE_UI_SCALE}"
 

@@ -47,6 +47,14 @@ sudo KIOSK_UI_SCALE="2" ./scripts/install.sh
 
 The default is `KIOSK_UI_SCALE=auto`. Auto mode keeps small portable monitors at native scale and enlarges Chromium on large high-resolution TV panels. Use `1`, `1.25`, `1.5`, `1.75`, or `2` if a specific display needs a fixed value.
 
+For a TV that is unreliable during automatic HDMI negotiation, pin the output, mode, and refresh rate together:
+
+```sh
+sudo KIOSK_DISPLAY_OUTPUT="HDMI-2" KIOSK_DISPLAY_MODE="1920x1080" KIOSK_DISPLAY_RATE="60" ./scripts/install.sh
+```
+
+The installer preserves these display settings during later upgrades unless they are explicitly overridden.
+
 Optional on-screen display detail level:
 
 ```sh

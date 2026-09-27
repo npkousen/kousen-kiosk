@@ -63,6 +63,8 @@ sudo KIOSK_UI_SCALE="2" ./scripts/install.sh
 
 By default `KIOSK_UI_SCALE` is `auto`. The launcher inspects the connected display and keeps small/portable monitors at `1x`, while scaling large high-resolution TV panels so Chromium and web apps are readable from across the room. Use a numeric override such as `1`, `1.5`, or `2` only when a specific display needs a fixed setting.
 
+Unreliable HDMI auto-negotiation can be bypassed by setting `KIOSK_DISPLAY_OUTPUT`, `KIOSK_DISPLAY_MODE`, and `KIOSK_DISPLAY_RATE` together. Installed display settings are preserved by subsequent installer runs.
+
 Optional on-screen display detail level:
 
 ```sh
